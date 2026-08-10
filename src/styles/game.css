@@ -1,0 +1,173 @@
+/*
+ * Dino Dash — layout, focus indicator and backing plates.
+ *
+ * There is deliberately NO colour literal in this file. Every colour is a custom
+ * property written at runtime from src/render/palette.js by src/render/hud.js, which
+ * is what makes the palette the single source of truth (ADR-004 §2).
+ *
+ * Backing plates are fully opaque: no rgba(), no opacity, no gradient anywhere behind
+ * text, so the background actually rendered behind any text is exactly one enumerated
+ * palette colour (AC-16).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--dd-shell);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+  background: var(--dd-shell);
+  color: var(--dd-shell-text);
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  display: flex;
+  justify-content: center;
+}
+
+.dd-root {
+  width: 100%;
+  max-width: 960px;
+}
+
+.dd-header {
+  margin: 0 0 16px;
+}
+
+.dd-title {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dd-shell-text);
+}
+
+.dd-subtitle {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dd-shell-text);
+}
+
+/* ---- play area ------------------------------------------------------------ */
+
+.dd-stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.dd-stage:focus {
+  outline: 5px solid var(--dd-focus);
+  outline-offset: 4px;
+}
+
+/* Keep the indicator identical for pointer and keyboard focus: it must always show. */
+.dd-stage:focus-visible {
+  outline: 5px solid var(--dd-focus);
+  outline-offset: 4px;
+}
+
+.dd-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- text layer ----------------------------------------------------------- */
+
+.dd-plate {
+  /* fully opaque backing plate — the mechanism behind AC-16 */
+  background-color: var(--dd-plate);
+  color: var(--dd-text-on);
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.dd-score {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: clamp(16px, 2.4vw, 22px);
+  letter-spacing: 0.08em;
+}
+
+.dd-label {
+  text-transform: uppercase;
+  font-size: 0.72em;
+  letter-spacing: 0.14em;
+}
+
+.dd-score-value {
+  font-variant-numeric: tabular-nums;
+  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+.dd-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.dd-callout {
+  font-size: clamp(15px, 2.2vw, 21px);
+  text-align: center;
+}
+
+.dd-callout--final {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: clamp(18px, 3vw, 28px);
+}
+
+.dd-kbd {
+  font-family: inherit;
+  font-weight: 800;
+  border-bottom: 3px solid var(--dd-text-on);
+  padding: 0 2px;
+}
+
+.dd-keys {
+  margin-top: 18px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ---- state-driven visibility (data-game-state is the load-bearing signal) --- */
+
+.dd-root[data-game-state="idle"] .dd-overlay--idle {
+  display: flex;
+}
+
+.dd-root[data-game-state="run-end"] .dd-overlay--run-end {
+  display: flex;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-stage {
+    scroll-behavior: auto;
+  }
+}

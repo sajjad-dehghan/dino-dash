@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dino Dash</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles/game.css" />
+  </head>
+  <body>
+    <!--
+      Single entry point (AC-01). No sign-in, no server dependency, no third-party asset.
+      The canvas draws the play field only; every character of player-facing text is DOM
+      text on an opaque backing plate (ADR-002 §1).
+    -->
+    <div id="dino-dash" class="dd-root" data-game-state="idle">
+      <header class="dd-header">
+        <h1 class="dd-title">Dino Dash</h1>
+        <p class="dd-subtitle">Run, jump the cacti, beat your last score.</p>
+      </header>
+
+      <section
+        id="dd-stage"
+        class="dd-stage"
+        tabindex="0"
+        aria-label="Dino Dash play area. Press Space or Up Arrow to start, to jump, and to restart."
+      >
+        <canvas id="dd-canvas" class="dd-canvas" width="960" height="320" aria-hidden="true"></canvas>
+
+        <p class="dd-plate dd-score" id="dd-score">
+          <span class="dd-label">Score</span>
+          <span class="dd-score-value" id="dd-score-value">0000</span>
+        </p>
+
+        <div class="dd-overlay dd-overlay--idle" id="dd-idle">
+          <p class="dd-plate dd-callout" id="dd-idle-instruction">
+            Press <kbd class="dd-kbd">Space</kbd> or <kbd class="dd-kbd">Up Arrow</kbd> to start
+          </p>
+        </div>
+
+        <div class="dd-overlay dd-overlay--run-end" id="dd-run-end">
+          <p class="dd-plate dd-callout" id="dd-run-end-title">Run over — you hit a cactus</p>
+          <p class="dd-plate dd-callout dd-callout--final" id="dd-final-score">
+            <span class="dd-label">Final score</span>
+            <span class="dd-score-value" id="dd-final-score-value">0000</span>
+          </p>
+          <p class="dd-plate dd-callout" id="dd-restart-instruction">
+            Press <kbd class="dd-kbd">Space</kbd> or <kbd class="dd-kbd">Up Arrow</kbd> to play again
+          </p>
+        </div>
+      </section>
+
+      <p class="dd-plate dd-keys" id="dd-keys">
+        Keys: <kbd class="dd-kbd">Space</kbd> or <kbd class="dd-kbd">Up Arrow</kbd> — start, jump,
+        restart. <kbd class="dd-kbd">Tab</kbd> — move focus to the play area. No other key does
+        anything.
+      </p>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
