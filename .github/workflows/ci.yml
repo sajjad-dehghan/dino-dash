@@ -9,8 +9,9 @@
 #
 # WHAT IS DELIBERATELY NOT HERE:
 #   - No dependency install step. The delivery has zero runtime and zero dev
-#     dependencies, there is no package-lock.json, and `npm ci` would fail with
-#     nothing to install. `npm test` runs on a bare checkout.
+#     dependencies. package-lock.json IS committed, but it pins an empty dependency
+#     set, so an install step would fetch nothing and buy nothing; omitting it is
+#     what proves the claim. `npm test` runs on a bare checkout with no node_modules.
 #   - No browser tier. ADR-005 chose Playwright for rendered-pixel and journey
 #     evidence, but WS-12 adds no dependency for tests that do not exist yet
 #     (browser-tier content is WS-10's). A workflow step that referenced a missing
