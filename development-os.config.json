@@ -597,7 +597,9 @@
       "infrastructure",
       ".github",
       "package.json",
-      "package-lock.json"
+      "package-lock.json",
+      "README.md",
+      "BENCHMARK.md"
     ],
     "prohibitedPaths": [
       ".git",
