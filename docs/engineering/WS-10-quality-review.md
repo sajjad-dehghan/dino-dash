@@ -516,7 +516,36 @@ for the tier that exists is worth more than one inflated to cover a tier that do
 
 ## 9. Reproducibility and boundary
 
-**Zero-install, clean checkout.** Every command in this record was run with no
+**Zero-install, clean checkout — re-proved at the commit that carries this work**, in the
+same shape WS-12 §5 used. Cloned to a scratch directory outside both repositories:
+
+```
+$ git clone --branch codex/evt-20260809-001 D:/os-test/dino-dash-app clean10
+$ cd clean10 && git rev-parse HEAD
+b522eab9ffd2483d5698db2d939f50d67545d530
+
+$ test -d node_modules && echo yes || echo no
+no                                       <- no install step, none needed
+
+$ npm test
+ℹ tests 114   ℹ pass 114   ℹ fail 0                                exit 0
+
+$ node tests/tools/ac-coverage.mjs
+evidence=11  partial=18  none=1
+wrote tests/.results/ac-coverage.json (24722 bytes)                exit 0
+
+$ npm run evidence:a11y                                            exit 0
+$ ls tests/.results/
+a11y-contrast.json  a11y-contrast.json.sha256  ac-coverage.json
+ac-coverage.json.sha256  unit-junit.xml
+```
+
+Three stated commands, three exit-0 runs, five machine-readable artifacts, and no `npm ci`
+anywhere. The `ac-coverage.json` digest differs between runs because the report carries its
+own `generatedAt` and `sourceRevision`; each generation is self-describing, the same
+convention WS-09 §4.4 used for the SBOM. The unit-tier result is byte-stable: 114 of 114.
+
+Every command in this record was run with no
 `node_modules` present and no install step. The six new test files import only `node:test`,
 `node:assert/strict`, `node:fs`, `node:path`, `node:url` and relative paths into `src/`;
 `tests/tools/ac-coverage.mjs` adds `node:crypto` and `node:child_process`. **No dependency
