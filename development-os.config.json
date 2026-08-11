@@ -599,7 +599,8 @@
       "package.json",
       "package-lock.json",
       "README.md",
-      "BENCHMARK.md"
+      "BENCHMARK.md",
+      "development-os.config.json"
     ],
     "prohibitedPaths": [
       ".git",
