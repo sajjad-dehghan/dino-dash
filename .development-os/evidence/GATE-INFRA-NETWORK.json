@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "1.0.0",
+  "gateId": "GATE-INFRA-NETWORK",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "relevantWorkstreamIds": [
+    "WS-08",
+    "WS-14"
+  ],
+  "workstreamRuns": [
+    {
+      "workstreamId": "WS-08",
+      "ownerRole": "ENG-08",
+      "status": "completed",
+      "verificationDisposition": "not_applicable",
+      "commands": [
+        "git rev-parse HEAD",
+        "git ls-files | wc -l",
+        "git ls-files | grep -Ei (IaC/container/cloud filename pattern: dockerfile, docker-compose, .tf, .tfvars, .tfstate, pulumi, cloudformation, chart.yaml, values.yaml, serverless.yaml, vercel.json, netlify.toml, fly.toml, app.yaml, Procfile, nginx.conf, .env*)",
+        "git ls-files | grep -Ei (directory pattern: k8s, kubernetes, helm, terraform, infra, infrastructure, deploy, deployment, .circleci, ansible)",
+        "git grep -nIiE (cloud/IaC content tokens across all tracked files, excluding prior WS-0* reviews)",
+        "grep -rnoE (network API and URL-bearing pattern over src/: fetch(, XMLHttpRequest, WebSocket, sendBeacon, EventSource, importScripts, @import, url(), href=, src=)",
+        "grep -rnE \"^\\s*(import|export)[^;]*from\" src/ --include=*.js",
+        "find src -type f -printf '%s\\t%p\\n' | sort -rn",
+        "find src -type f | wc -l ; find src -type f -printf '%s\\n' | awk '{s+=$1} END {print s}'",
+        "find . -path ./.git -prune -o \\( -iname '.env*' -o -iname '*secret*' -o -iname '*.pem' -o -iname '*.key' -o -iname 'credentials*' \\) -print",
+        "node -e (inline: resolve src/index.html module graph transitively; emit request closure, byte total, largest file)",
+        "node tests/tools/static-server.mjs 4188",
+        "node -e (inline: GET all 17 cold-load paths on 127.0.0.1:4188; assert status 200 and Content-Type; sum bytes)",
+        "git add docs/engineering/WS-08-platform-review.md",
+        "git -c user.name=\"ENG-08 Platform, Cloud and Network\" -c user.email=\"actor-eng-08@dino-dash.local\" commit -m \"WS-08 Platform, Cloud and Network for DEVREQ-EVT-20260809-001: recorded not-applicable determination with zero IaC and cloud tokens, measured 17-request static artifact and static-origin hosting floor\""
+      ],
+      "evidence": [
+        "Revision reviewed b35af29f4516c54b00fd8473b45b763688982978; 79 tracked files scanned.",
+        "IaC/container/cloud filename scan (Dockerfile, docker-compose*, *.tf/*.tfvars/*.tfstate/*.tf.json, pulumi*, *cloudformation*, chart.yaml, values.yaml, serverless.yml, vercel.json, netlify.toml, fly.toml, app.yaml, Procfile, nginx.conf, .env*): 0 matches.",
+        "Directory scan (k8s, kubernetes, helm, terraform, infra, infrastructure, deploy, deployment, .circleci, ansible): 0 matches.",
+        "Content token scan across all tracked files excluding prior WS-0* reviews (terraform, pulumi, cloudformation, kubernetes, kubectl, helm, docker, serverless, aws_, s3://, gs://, azure, gcp, cloudfront, route53, lambda, fargate, nginx, vercel, netlify, heroku, fly.io, cdn.): 0 matches.",
+        "Runtime network API scan of src/ (fetch(, XMLHttpRequest, WebSocket, sendBeacon, EventSource, importScripts, @import, url()): 2 hits, both prose comments (src/main.js:6, src/trace/score-trace.js:11); 0 call sites.",
+        "Deployable artifact measured: src/ = 18 files, 42559 bytes total, all 18 git-tracked. Largest file src/render/palette.js 7049 B; second src/render/canvas-renderer.js 6191 B. Runtime dependencies 0.",
+        "Cold load = 17 HTTP requests (1 document + 1 stylesheet + 15 ES modules), 42517 bytes. Favicon is href=data:, = 0 requests. src/package.json (42 B) is never fetched. Cross-origin requests 0; requests after load 0.",
+        "Measured live: started tests/tools/static-server.mjs on 127.0.0.1:4188, issued all 17 GETs, got 17/17 status 200 with correct MIME (text/html, text/css, text/javascript), 42517 bytes, 0 failures; server stopped, nothing left running.",
+        "GATE-INFRA-NETWORK (engineering/quality/gates.json lines 76-84): ownerRole ENG-08, domain infrastructure, required false, evidence [infrastructure plan, network and cost review]. NOT ENGAGED - both evidence items have no referent: 0 infrastructure artifacts and 0 runtime network calls, so authoring either would document a system that does not exist. No required:true gate is owned by ENG-08.",
+        "Static-origin claim VERIFIED not asserted: src/index.html:60 is script type=module src=main.js; 0 classic (non-module) script tags; no nomodule, no inline bootstrap; 24 static import/export-from statements in src/, every specifier relative, no bare specifier, no import map, no dynamic import(). All 15 JS files load only via module resolution, so file:// (opaque origin, module CORS) fails the load and emits a console error, failing AC-01. Consistent with ADR-001 section 4.",
+        "Minimum viable hosting: any HTTP static file server that serves the 17 files of src/ at one origin with relative paths preserved and sends text/javascript for .js. Nothing else - no TLS, routing, rewrite, server logic, session or state. Floor already met by tests/tools/static-server.mjs (63 lines, zero dependencies); ADR-005 section 2 assigns the pinned equivalent to WS-12.",
+        "Toolchain/secret state: no root package.json, no lockfile, no .github/, no CI workflow, no node_modules at this revision (WS-12 has not run). Worktree search for .env*, *secret*, *.pem, *.key, credentials*: 0 files.",
+        "Cited without re-running: WS-01-coordination.md (sections 0, 1, B-01, B-03, R-02, R-03), ADR-001 section 4, ADR-005 sections 1/2/4/6, WS-04 (no server/API/integration), WS-05 (no packaged client), WS-06 (no persistence), WS-07 (no telemetry/pipeline).",
+        "Unit 3 analysis (relayed owner disposition: self-hosted on owner machine, local, any client may submit): no cloud account so no provider, region, IAM, managed service or external billing; no scaling story - no autoscaling, load balancer, capacity plan or availability target, replaced by reachable only while that machine runs, which Unit 1 is immune to since it declares no network dependency; a single origin, extending the section 5 file-reader by one request handler and giving GATE-INFRA-NETWORK's network half a referent while the cost half stays empty; and any client may submit makes the origin the only enforcement surface because it is the only component that is not the submitting client. No component, technology, sizing or mechanism proposed.",
+        "Provisioned nothing. No IaC, Dockerfile or deployment config written. No infrastructure/, database/, migrations/, services/, app/, apps/ or packages/ directory created. Exactly one file created: docs/engineering/WS-08-platform-review.md (369 lines). Nothing under engineering/, .development-os/, DEVELOPMENT.md, development-os.config.json, src/, tests/ or D:/os-test/dino-dash touched."
+      ],
+      "knownRisks": [
+        "No browser was driven. The file:// failure is verified only at its preconditions (type=module, zero classic-script fallback, all-relative specifiers). Observing the Chromium console error is WS-10 browser-tier work under AC-01 and is not claimed here.",
+        "WS-12 has not run: no root package.json, lockfile or CI workflow exists. All artifact figures are the WS-03 delivery and should not change under ADR-005 section 1 (no build step), but a re-measure after WS-12 is the correct check if doubted.",
+        "Section 6 rests on a coordinator-relayed owner disposition for Unit 3. ENG-08 did not read the product workspace D:/os-test/dino-dash and does not restate the decision identifier; if the relay is inaccurate its four consequences are too. Sections 1-5 do not depend on it.",
+        "GATE-INFRA-NETWORK is not waived, deferred or pre-cleared for any later unit; it becomes live as soon as a unit introduces a hosted component.",
+        "The owner's client-side score-tamperability risk acceptance is bounded to Units 1 and 2 and is neither re-accepted nor widened here. real_money_or_provider_operation, product_direction_or_priority and final_user_visible_acceptance are neither engaged nor pre-cleared.",
+        "Carried unchanged: contract security NFR / ISS-20260809-010 (whether Unit 1 must emit an attestable score trace is a Unit 1 question generated by Unit 3), privacy NFR / ISS-20260809-015 (self-hosting relocates the friend-group data, it does not reduce the unmet consent/retention/deletion obligation), and WS-01 R-02 (performance budget remains UNKNOWN; ENG-08 invented none).",
+        "Pre-existing working-tree state (modified engineering/taskboard/workstreams.csv, untracked .development-os/ files) predates WS-08 and is intake bookkeeping, not this delivery, per WS-01 B-07. Only the one docs/ file was staged."
+      ]
+    },
+    {
+      "workstreamId": "WS-14",
+      "ownerRole": "ENG-15",
+      "status": "completed",
+      "verificationDisposition": "passed",
+      "commands": [
+        "git clone --no-hardlinks into a temp dir outside both repos, then git checkout d3560a81",
+        "npm test gives exit 0",
+        "npm run evidence:a11y gives exit 0",
+        "node tests/tools/ac-coverage.mjs gives exit 0",
+        "npm run perf:artifact gives exit 0",
+        "npm run perf:simulation gives exit 0",
+        "node tests/security/sbom.mjs, secret-scan.mjs and surface-scan.mjs give exit 0, 0, 0",
+        "npm test at bd43f5f in a pre-WS-10 clone gives exit 0, 61 tests",
+        "git rev-parse <commit>:src for all 18 commits",
+        "git log --name-only 32d94b5..HEAD for the boundary inventory",
+        "node --input-type=module live F-01 execution against src/game/state-machine.js"
+      ],
+      "evidence": [
+        "SRC SEAL VERIFIED: all 16 commits from ea12453 (WS-03) to HEAD resolve src tree 0566d5d39599d0cdf374b5dee27d22afdb544c41; the 2 earlier commits have no src path. No workstream altered product source.",
+        "npm test from a clean clone, zero-install: tests 114 / pass 114 / fail 0, duration_ms 643.78, exit 0. node_modules absent before AND after. WS-10's 114/114 and WS-12's zero-install both reproduce exactly.",
+        "The 53-test delta reproduces: 61 tests at bd43f5f, 114 at HEAD.",
+        "evidence:a11y: 33 rows, 33 passed / 0 failed, min text 11.91 against threshold 4.5, min non-text 3.07 against threshold 3. Declared palette, not rendered pixels.",
+        "ac-coverage: evidence 11, partial 18, none 1, consistent true, problems empty. Read the test titles behind all 11 evidence criteria against unit-1-ac-traceability.md: NO evidence-claimed criterion is unsupported. AC-21, AC-25 and AC-29 carry explicit limitation strings; AC-01, the sole none, declines to borrow AC-24's evidence.",
+        "perf:artifact: 17 requests, 0 non-200, disk total equals wire total. Request count confirmed.",
+        "F-01 REPRODUCED LIVE: transition('constructor') returns true, state holds a function, STATE_VALUES.includes(state) is false, and the machine is then bricked (transition('start') returns false). WS-09's finding and WS-10's one-way-escape addition are both confirmed by execution; unreachability holds, since all 3 call sites pass literals.",
+        "Frame-rate independence confirmed: score 600/600/600 at 30/60/144 fps, spread 0 points, distancePx spread 4.48 px (0.012%).",
+        "Jump-apex spread confirmed: 134.44 / 141.67 / 145.88 px equals 8.51%, matching WS-11's stated 8.5%.",
+        "BOUNDARY CLEAN: zero delivery commits touched engineering/, .development-os/, DEVELOPMENT.md or development-os.config.json. README.md and docs/media/*.png were touched by exactly one commit, bf5ac18, authored by Product Operations - owner-directed and OUT OF SCOPE. BENCHMARK.md is not git-tracked at all.",
+        "D-1 BYTE TOTAL RECONCILED: measured 43842 B against the 42517 B in WS-08, WS-11 and WS-13. Cause: core.autocrlf true with no .gitattributes. Canonical git blobs sum to 42559 B over 18 files (index.html 2477, main.js 3903, palette.js 7049 - matching WS-08 exactly); minus src/package.json (42 B, never fetched) gives 42517. A fresh Windows checkout is CRLF, adding 1 byte per line, 1325 over the 17 fetched files. The src tree object is identical in both. WS-12 had ALREADY found and correctly diagnosed this same root cause. A disclosed environment property, not a contradiction.",
+        "D-2 WS-09 UNDERCOUNT: WS-09 states 10 inherited names accepted by transition(); the actual number is 12. tests/security/surface-scan.mjs hard-codes a 10-name probe omitting __defineSetter__ and __lookupSetter__. It understates rather than overstates and changes no conclusion. WS-10 had already corrected the methodology by deriving the alphabet from Object.getOwnPropertyNames(Object.prototype) at runtime.",
+        "D-3 WS-09 STALE SCAN FIGURE: zero matches on all 25 credential patterns no longer reproduces - pem_certificate 1 and putty_key_file 1 at HEAD, both self-matches on the scanner's own regex literals at tests/security/secret-scan.mjs:43-44. tests/security/ was UNTRACKED at d5b71dd (verified by listing that tree), so the tool could not then match itself. True when made, stale now. No credential material; sensitive paths ever tracked remains 0.",
+        "DECLARED GAPS ARE GENUINELY DECLARED: no browser tier (WS-10's cold Playwright run: ten minutes, zero output, exit 143), unset performance budget (both perf harnesses close by refusing to assert a threshold), rendered-pixel half of AC-16/AC-17. Each appears in the runbook, the operating overview and the machine-readable coverage matrix as an open gap. ci.yml states in its own header that it has NEVER been executed.",
+        "POST-COMMIT SEAL RE-CHECK: git rev-parse HEAD:src equals 0566d5d39599d0cdf374b5dee27d22afdb544c41 - UNCHANGED. The commit 979c6fb changed exactly one file; its parent is still d3560a81; git diff d3560a81..HEAD over src, tests, package.json and package-lock.json is empty.",
+        "DISPOSITION passed: every load-bearing claim reproduced. The three discrepancies are a line-ending artifact the delivery had already self-diagnosed, an undercount that understates a finding and was already corrected methodologically, and a stale-by-construction scan figure with no credential behind it. No material claim failed to reproduce; no gap was hidden rather than declared."
+      ],
+      "knownRisks": [
+        "R-01 src/ byte totals and any sha256 over src/ files are checkout-dependent on Windows (core.autocrlf true, no .gitattributes). A root .gitattributes would settle it; outside this workstream's write boundary.",
+        "R-02 F-01 remains LIVE and UNFIXED in sealed source, unreachable only because all three call sites pass literals. The first unit to route a string into transition() makes it real. True breadth is 12 inherited names, not the 10 recorded by WS-09.",
+        "R-03 tests/security/surface-scan.mjs hard-codes its probe list and will keep under-reporting F-01's breadth.",
+        "R-04 secret-scan.mjs will keep reporting 2 self-matches until it excludes its own source; a future reader must not read them as credential material.",
+        "R-05 Fourteen criteria stay partial and AC-01 stays none until a browser tier exists. This verification covers the unit tier only - NO rendered pixel was observed by this workstream."
+      ]
+    }
+  ],
+  "generatedAt": "2026-08-11T15:16:37.606Z"
+}

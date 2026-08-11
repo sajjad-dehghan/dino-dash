@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "1.0.0",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "workstreamId": "WS-10",
+  "ownerRole": "ENG-10",
+  "producerActorId": "actor-eng-10",
+  "status": "completed",
+  "verificationDisposition": "not_applicable",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "changedComponents": [
+    "tests/unit/state-machine-prototype.test.mjs (new, 8 tests) - regression guard and containment guard for WS-09 F-01",
+    "tests/unit/keyboard-journey.test.mjs (new, 12 tests) - AC-12 six-step journey over the real keyboard module",
+    "tests/unit/absent-surface.test.mjs (new, 10 tests) - 35 storage, 46 injection, 20 identity, 19 network, 35 catalogue tokens",
+    "tests/unit/frame-gap-accrual.test.mjs (new, 8 tests) - score accrual across a zero-frame gap",
+    "tests/unit/score-format-extremes.test.mjs (new, 8 tests) - formatScore extremes and hostile inputs",
+    "tests/unit/trace-contract.test.mjs (new, 7 tests) - AC-29 ADR-003 document versus delivered behaviour",
+    "tests/tools/ac-coverage.mjs (new harness, not in the npm test glob) - AC matrix, exits 1 when inflated",
+    "docs/engineering/WS-10-quality-review.md (new)",
+    "No file under src/ changed: HEAD:src equals 0566d5d39599d0cdf374b5dee27d22afdb544c41, WS-03's seal"
+  ],
+  "commands": [
+    "npm test gives tests 114 / pass 114 / fail 0, exit 0 (61 before WS-10)",
+    "node tests/tools/ac-coverage.mjs gives evidence 11, partial 18, none 1, exit 0",
+    "npm run evidence:a11y gives exit 0",
+    "git clone --branch codex/evt-20260809-001 into clean10 then npm test gives 114/114 exit 0 with no node_modules and no npm ci",
+    "npm view @playwright/test version gives 1.62.1",
+    "npm install @playwright/test@1.62.1 gives added 3 packages in 6s, exit 0, in a scratch dir outside both repos",
+    "PLAYWRIGHT_BROWSERS_PATH set to a fresh dir then npx playwright install chromium gives no output, terminated at 600s exit 143, cold dir held only .links and __dirlock at 1.0K, no chromium build",
+    "git rev-parse HEAD:src and git diff --check give clean"
+  ],
+  "evidence": [
+    "tests/.results/unit-junit.xml - 114 testcase elements, 0 failure elements",
+    "tests/.results/ac-coverage.json plus sha256 sidecar - AC-01 to AC-30 matrix, self-describing sourceRevision and generatedAt",
+    "tests/.results/a11y-contrast.json plus sha256 sidecar - AC-16/AC-17 declared-palette contrast from WS-12's command",
+    "Coverage summary: 11 of 30 criteria have machine evidence (AC-03, 04, 06, 07, 08, 09, 13, 19, 21, 25, 29); 18 partial (AC-02, 05, 10, 11, 12, 14, 15, 16, 17, 18, 20, 22, 23, 24, 26, 27, 28, 30); 1 none (AC-01, entirely a browser observation)",
+    "14 of the 18 partials are partial for one reason: no rendered page is observed anywhere in this delivery",
+    "WS-09 F-01 closed as a guard, not a fix: 12 inherited Object.prototype names accepted as events and driving state off STATE_VALUES are pinned; an Object.hasOwn fix is proved complete; transition and enterRun argument expressions are pinned so any future external string routed in fails the suite",
+    "WS-09 F-01 correction: main.js:48 passes the variable event, not a literal; containment holds via enterRun's two literal call sites, both now pinned",
+    "WS-09 F-02 correction: the non-digit characters formatScore can emit are e, plus AND dot - formatScore(Number.MAX_VALUE) is 1.7976931348623157e+308",
+    "WS-06 L-06 closed: all 35 storage tokens now asserted, 9 raw occurrences all comments, 0 after stripping; devicePixelRatio pinned at exactly 1 occurrence",
+    "WS-05 background-gap finding closed as a test: 2000ms foreground scores 20, one resume frame carrying 60000ms scores 620, world advances exactly 36px, 0 collision tests evaluated; the same elapsed time in 1 frame and in 3661 frames gives the identical score",
+    "GATE-AUTOMATED-TESTS: DISCHARGED FOR THE UNIT TIER with the browser tier recorded as a declared gap. Both named evidence artifacts exist and reproduce from a clean checkout"
+  ],
+  "knownRisks": [
+    "L-01 no browser tier exists. Cold Playwright Chromium acquisition ran 10 minutes with zero output and zero bytes downloaded into a fresh browsers path, while npm itself was reachable. This sharpens WS-12 R-05 from unobserved to observed-and-failed. No dependency, config or script was added, so no phantom dependency and no broken stated command was left behind",
+    "L-02 AC-16/AC-17 rendered-pixel half stays open; WS-12 R-01 inherited unchanged, not closed",
+    "L-03 AC-30 names accessibility evidence for AC-12, AC-14, AC-16 and AC-17; a command exists for AC-16/AC-17 only. AC-12 has a logic-tier substitute; AC-14 has none, because a rendered focus indicator is unobservable here",
+    "L-04 keyboard-journey re-creates main.js's wiring rather than importing it, because main.js touches document at import time, so a divergence between the two would not be caught",
+    "L-05 the F-01 characterisation tests fail when the defect is fixed; the file header instructs the fixer to invert them rather than delete them, and to keep the containment tests either way",
+    "L-06 the containment guard pins exact argument expressions and is brittle by design; a harmless main.js refactor fails it",
+    "L-07 a token scan cannot prove the absence of an unnamed API; the five token lists are literals in the test file so coverage is judgeable rather than trusted",
+    "L-08 the matrix's disposition column is ENG-10's judgement; the harness only measures which tests name which criterion and rejects contradictions",
+    "L-09 AC-20's stopwatch tolerance and AC-21's OS-clock procedure are met by injected clocks, the declared substitutes under WS-01 B-05, and are reported as substitutes",
+    "L-10 frame-gap behaviour is characterised, not accepted. WS-05's distinction is preserved: DEC-20260809-001 covers deliberate forgery and does not address time-derived accrual while hidden. Client-side score forgeability is the owner's accepted risk under APR-870DC901FD68 and is not re-accepted here",
+    "L-11 README.md was modified and a new root file BENCHMARK.md appeared in the working tree during this workstream, authored by some process other than WS-10. Both are outside WS-10's write boundary, neither was staged or committed, both left as found. BENCHMARK.md states 61 tests, correct at bd43f5f and superseded by 114",
+    "L-12 every determination is scoped to Unit 1 at this revision; Units 2 to 5 are not contracted and nothing here pre-clears them"
+  ],
+  "completedAt": "2026-08-11T13:44:39Z"
+}

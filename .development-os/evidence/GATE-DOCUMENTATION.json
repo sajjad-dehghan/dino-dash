@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0.0",
+  "gateId": "GATE-DOCUMENTATION",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "relevantWorkstreamIds": [
+    "WS-13",
+    "WS-14"
+  ],
+  "workstreamRuns": [
+    {
+      "workstreamId": "WS-13",
+      "ownerRole": "ENG-14",
+      "status": "completed",
+      "verificationDisposition": "not_applicable",
+      "commands": [
+        "npm test gives tests 114 / pass 114 / fail 0, duration_ms 338.0159, exit 0 (re-run after docs: 114/114, exit 0)",
+        "npm run evidence:a11y gives 3 variations, 11 pairs, 33 rows, 33 pass / 0 fail, min text 11.91, min non-text 3.07, exit 0",
+        "node tests/tools/static-server.mjs 4173 serving src/; GET / 200 2477 B; GET /main.js 200 3903 B",
+        "node tests/tools/ac-coverage.mjs gives evidence 11, partial 18, none 1; ac-coverage.json 24722 B, sha256 bf5ca2cd52f7bda398a93c4b576ba88eab11f69481c4a5876d614194549ae7fe, exit 0",
+        "npm run perf:artifact gives 17 requests, 0 non-200, disk 42517 equals wire 42517, exit 0",
+        "npm run perf:simulation (node --expose-gc tests/perf/simulation-cost.mjs) gives the full report, asserts nothing, exit 0",
+        "git add (5 docs files only); git diff --check --cached clean; git commit gives d3560a8, 5 files, 1005 insertions",
+        "Environment: Node v22.23.2, npm 10.9.8, Windows 11 Pro 10.0.28000, Git Bash, no node_modules, no install step"
+      ],
+      "evidence": [
+        "AC-29 prediction (written to a scratch file OUTSIDE the repo BEFORE opening src/trace/score-trace.js or any run-loop module, from ADR-003 and docs/score-trace-contract.md alone): score = number/integer/points/>=0; endedAt = string, ISO-8601 UTC, literal Z, YYYY-MM-DDTHH:MM:SS.mmmZ; sessionLengthMs = number/integer/milliseconds/monotonic/>=0; keys exactly endedAt, score, sessionLengthMs; no id, no schema version, no device marker, no nesting",
+        "AC-29 actual records, from three real seeded runs over the delivered src/game/* and src/trace/score-trace.js at the sealed tree: score 35, endedAt 2026-08-11T14:04:36.171Z, sessionLengthMs 3600 (and .172Z, .173Z)",
+        "AC-29 comparison: ZERO discrepancies. keys equal endedAt, score, sessionLengthMs; score number integer true; endedAt string matching the UTC Z pattern and Date.parse ok; sessionLengthMs number integer true; prototype is Object.prototype; copy-on-read confirmed (two list() calls returned a different array AND different record objects); 3 records after 3 runs",
+        "AC-29 method disclosure: module API (appendRunEnd/list/size/RECORD_FIELDS) discovered by runtime introspection, not by reading the module; src/main.js accessor names confirmed by targeted grep AFTER the prediction was fixed on disk; window.dinoDash.getScoreTrace() itself NOT exercised - no browser tier exists",
+        "AC-29 discoverability: docs/README.md row 1 of table 1 points to docs/score-trace-contract.md, repeated in a call-out; the document opens by stating it can be read alone without opening src/",
+        "Standing drift guard: tests/unit/trace-contract.test.mjs (7 tests, under npm test) reads ADR-003 and asserts the delivered module matches the documented field set, types, units and UTC Z convention",
+        "GATE-DOCUMENTATION (required true) DISCHARGED. Updated operating documentation maps to docs/operating-overview.md plus docs/score-trace-contract.md plus docs/README.md. Runbook or migration notes maps to docs/runbook.md (six commands each executed with real output, manual AC-12/AC-14 procedure, clean-checkout recipe, CI status); migration notes not_applicable - nothing persists, so nothing to migrate. Disposition and evidence table also recorded in docs/engineering/WS-13-documentation.md",
+        "engineering/standards/ contains eight standards and none covers technical_documentation - no domain standard exists for this workstream to discharge"
+      ],
+      "knownRisks": [
+        "No browser tier. WS-10's cold Playwright acquisition: ten minutes, zero output, zero bytes, exit 143. Fourteen criteria partial or none for this one reason. Carried in runbook R-06 and overview section 9.1",
+        "Rendered-pixel half of AC-16/AC-17 unmeasured - evidence:a11y measures the declared palette only. A failing row proves the palette cannot pass; a passing row does not close the criterion. runbook R-01",
+        "Performance budget UNSET and must not be invented; GATE-PERFORMANCE and GATE-RELIABILITY are recorded gaps, not passes. PERF-R-01 (8.5% jump-apex spread across 30-144 fps) documented as measurement, explicitly not judged. runbook R-05",
+        "WS-09 F-01 guarded, not fixed - prototype-chain lookup in transition(); unreachable at this revision, characterised and containment-tested; src/ is sealed. Characterisation tests are written to FAIL when it is fixed. runbook R-08",
+        "endedAt Z interpretation risk live against AC-19's explicit UTC offset; a verifier requiring numeric plus-minus HH:MM would find Z insufficient. score-trace-contract section 2, runbook R-09",
+        "AC-30 names AC-12 and AC-14 and no command produces evidence for either; AC-14 has no substitute at all. Procedure stated in runbook section 2. runbook R-07",
+        "Score trace grows unboundedly by design (about 58.3 B per record, one per run end); inherited by Unit 3 at the seam",
+        "Hidden-tab time-derived score accrual (+600 points per 60 s hidden) documented and kept DISTINCT from DEC-20260809-001's forgery acceptance; not re-accepted here",
+        "CI workflow has never been executed; engines floor >=20.11.0 declared but only v22.23.2 exercised. runbook R-03",
+        "CRLF and no .gitattributes makes byte totals and src/ digests checkout-dependent on Windows; raised, not fixed (outside boundary). runbook R-02",
+        "Evidence deposition under .development-os/evidence/ not performed - outside this write boundary. runbook R-11",
+        "aria-hidden canvas: the play field is not conveyed to assistive technology - recorded as a known limitation, not a satisfied requirement"
+      ]
+    },
+    {
+      "workstreamId": "WS-14",
+      "ownerRole": "ENG-15",
+      "status": "completed",
+      "verificationDisposition": "passed",
+      "commands": [
+        "git clone --no-hardlinks into a temp dir outside both repos, then git checkout d3560a81",
+        "npm test gives exit 0",
+        "npm run evidence:a11y gives exit 0",
+        "node tests/tools/ac-coverage.mjs gives exit 0",
+        "npm run perf:artifact gives exit 0",
+        "npm run perf:simulation gives exit 0",
+        "node tests/security/sbom.mjs, secret-scan.mjs and surface-scan.mjs give exit 0, 0, 0",
+        "npm test at bd43f5f in a pre-WS-10 clone gives exit 0, 61 tests",
+        "git rev-parse <commit>:src for all 18 commits",
+        "git log --name-only 32d94b5..HEAD for the boundary inventory",
+        "node --input-type=module live F-01 execution against src/game/state-machine.js"
+      ],
+      "evidence": [
+        "SRC SEAL VERIFIED: all 16 commits from ea12453 (WS-03) to HEAD resolve src tree 0566d5d39599d0cdf374b5dee27d22afdb544c41; the 2 earlier commits have no src path. No workstream altered product source.",
+        "npm test from a clean clone, zero-install: tests 114 / pass 114 / fail 0, duration_ms 643.78, exit 0. node_modules absent before AND after. WS-10's 114/114 and WS-12's zero-install both reproduce exactly.",
+        "The 53-test delta reproduces: 61 tests at bd43f5f, 114 at HEAD.",
+        "evidence:a11y: 33 rows, 33 passed / 0 failed, min text 11.91 against threshold 4.5, min non-text 3.07 against threshold 3. Declared palette, not rendered pixels.",
+        "ac-coverage: evidence 11, partial 18, none 1, consistent true, problems empty. Read the test titles behind all 11 evidence criteria against unit-1-ac-traceability.md: NO evidence-claimed criterion is unsupported. AC-21, AC-25 and AC-29 carry explicit limitation strings; AC-01, the sole none, declines to borrow AC-24's evidence.",
+        "perf:artifact: 17 requests, 0 non-200, disk total equals wire total. Request count confirmed.",
+        "F-01 REPRODUCED LIVE: transition('constructor') returns true, state holds a function, STATE_VALUES.includes(state) is false, and the machine is then bricked (transition('start') returns false). WS-09's finding and WS-10's one-way-escape addition are both confirmed by execution; unreachability holds, since all 3 call sites pass literals.",
+        "Frame-rate independence confirmed: score 600/600/600 at 30/60/144 fps, spread 0 points, distancePx spread 4.48 px (0.012%).",
+        "Jump-apex spread confirmed: 134.44 / 141.67 / 145.88 px equals 8.51%, matching WS-11's stated 8.5%.",
+        "BOUNDARY CLEAN: zero delivery commits touched engineering/, .development-os/, DEVELOPMENT.md or development-os.config.json. README.md and docs/media/*.png were touched by exactly one commit, bf5ac18, authored by Product Operations - owner-directed and OUT OF SCOPE. BENCHMARK.md is not git-tracked at all.",
+        "D-1 BYTE TOTAL RECONCILED: measured 43842 B against the 42517 B in WS-08, WS-11 and WS-13. Cause: core.autocrlf true with no .gitattributes. Canonical git blobs sum to 42559 B over 18 files (index.html 2477, main.js 3903, palette.js 7049 - matching WS-08 exactly); minus src/package.json (42 B, never fetched) gives 42517. A fresh Windows checkout is CRLF, adding 1 byte per line, 1325 over the 17 fetched files. The src tree object is identical in both. WS-12 had ALREADY found and correctly diagnosed this same root cause. A disclosed environment property, not a contradiction.",
+        "D-2 WS-09 UNDERCOUNT: WS-09 states 10 inherited names accepted by transition(); the actual number is 12. tests/security/surface-scan.mjs hard-codes a 10-name probe omitting __defineSetter__ and __lookupSetter__. It understates rather than overstates and changes no conclusion. WS-10 had already corrected the methodology by deriving the alphabet from Object.getOwnPropertyNames(Object.prototype) at runtime.",
+        "D-3 WS-09 STALE SCAN FIGURE: zero matches on all 25 credential patterns no longer reproduces - pem_certificate 1 and putty_key_file 1 at HEAD, both self-matches on the scanner's own regex literals at tests/security/secret-scan.mjs:43-44. tests/security/ was UNTRACKED at d5b71dd (verified by listing that tree), so the tool could not then match itself. True when made, stale now. No credential material; sensitive paths ever tracked remains 0.",
+        "DECLARED GAPS ARE GENUINELY DECLARED: no browser tier (WS-10's cold Playwright run: ten minutes, zero output, exit 143), unset performance budget (both perf harnesses close by refusing to assert a threshold), rendered-pixel half of AC-16/AC-17. Each appears in the runbook, the operating overview and the machine-readable coverage matrix as an open gap. ci.yml states in its own header that it has NEVER been executed.",
+        "POST-COMMIT SEAL RE-CHECK: git rev-parse HEAD:src equals 0566d5d39599d0cdf374b5dee27d22afdb544c41 - UNCHANGED. The commit 979c6fb changed exactly one file; its parent is still d3560a81; git diff d3560a81..HEAD over src, tests, package.json and package-lock.json is empty.",
+        "DISPOSITION passed: every load-bearing claim reproduced. The three discrepancies are a line-ending artifact the delivery had already self-diagnosed, an undercount that understates a finding and was already corrected methodologically, and a stale-by-construction scan figure with no credential behind it. No material claim failed to reproduce; no gap was hidden rather than declared."
+      ],
+      "knownRisks": [
+        "R-01 src/ byte totals and any sha256 over src/ files are checkout-dependent on Windows (core.autocrlf true, no .gitattributes). A root .gitattributes would settle it; outside this workstream's write boundary.",
+        "R-02 F-01 remains LIVE and UNFIXED in sealed source, unreachable only because all three call sites pass literals. The first unit to route a string into transition() makes it real. True breadth is 12 inherited names, not the 10 recorded by WS-09.",
+        "R-03 tests/security/surface-scan.mjs hard-codes its probe list and will keep under-reporting F-01's breadth.",
+        "R-04 secret-scan.mjs will keep reporting 2 self-matches until it excludes its own source; a future reader must not read them as credential material.",
+        "R-05 Fourteen criteria stay partial and AC-01 stays none until a browser tier exists. This verification covers the unit tier only - NO rendered pixel was observed by this workstream."
+      ]
+    }
+  ],
+  "generatedAt": "2026-08-11T15:16:37.606Z"
+}

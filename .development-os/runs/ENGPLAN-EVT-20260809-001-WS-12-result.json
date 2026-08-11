@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "workstreamId": "WS-12",
+  "ownerRole": "ENG-12",
+  "producerActorId": "actor-eng-12",
+  "status": "completed",
+  "verificationDisposition": "not_applicable",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "changedComponents": [
+    "package.json - added, type module, engines >=20.11.0, six scripts, empty dependency and devDependency sets",
+    "package-lock.json - added, lockfileVersion 3, empty dependency set, no install required by any stated command",
+    "tests/a11y/contrast-evidence.mjs - added, accessibility evidence command, imports measureContrast from src/render/palette.js and duplicates no maths",
+    "tests/.results/.gitignore - added so the results directory exists in a clean checkout",
+    "tests/.gitignore - modified, .results/* plus a negation for the placeholder",
+    ".github/workflows/ci.yml - added, checkout plus setup-node 20.11.0 and 22.x, asserts node_modules absent, runs npm test and npm run evidence:a11y, uploads results; never executed",
+    "docs/engineering/WS-12-delivery-review.md - added, commands, real output, clean-checkout proof",
+    "src/ - UNCHANGED, sealed at WS-03; zero paths outside tests/, docs/, .github/, package.json, package-lock.json across all four WS-12 commits"
+  ],
+  "commands": [
+    "npm test - node --test with spec to stdout and junit to tests/.results/unit-junit.xml",
+    "npm run evidence:a11y - node tests/a11y/contrast-evidence.mjs, writes tests/.results/a11y-contrast.json plus .sha256 sidecar",
+    "npm start - node tests/tools/static-server.mjs, serves src/ on 127.0.0.1",
+    "npm run perf:artifact - WS-11 artifact weight harness, asserts nothing, outside the pass/fail path",
+    "npm run perf:simulation - WS-11 simulation cost harness, asserts nothing, outside the pass/fail path",
+    "git worktree add --detach <scratchpad>/ws12-clean 6d884f1 - the clean checkout, outside both repositories, removed after use"
+  ],
+  "evidence": [
+    "CLEAN CHECKOUT at 6d884f11759a04e414972787703f31a180fdcffe, detached worktree outside dino-dash-app and outside D:/os-test/dino-dash. Verified before running: no node_modules, tests/.results holding only its .gitignore. NO INSTALL STEP WAS RUN AT ANY POINT.",
+    "npm test EXIT 0 - tests 61, pass 61, fail 0, cancelled 0, skipped 0, todo 0, duration_ms 630.5886; wrote tests/.results/unit-junit.xml 7149 B",
+    "npm run evidence:a11y EXIT 0 - 33 rows (3 background variations x 11 declared pairs), 33 passed, 0 failed; min text ratio 11.91 against threshold 4.5, min non-text 3.07 against threshold 3; sourceRevision resolved to 6d884f1; wrote a11y-contrast.json 12930 B and .sha256 sidecar 60b2ec0b85cf5f8a410b4ad0bd875f785dcf87c1eedb608d42c72efc47f1acbe",
+    "node tests/tools/static-server.mjs 4191 - GET / returned 200 text/html 2532 B, GET /main.js returned 200 text/javascript",
+    "npm run perf:artifact EXIT 0 - 17 requests, 0 non-200, disk total equals wire total at 43842 B",
+    "npm run perf:simulation EXIT 0 - full WS-11 report, ends with the statement that no threshold was asserted and these are observations, not budgets.",
+    "Worktree removed afterwards; git worktree list shows only the main working tree.",
+    "Boundary check: git diff --name-status e8a2959..d5b71dd lists exactly 7 paths, all inside tests/, docs/, .github/, package.json, package-lock.json; intersection with prohibited set is empty; git diff --check clean on every staged set.",
+    "docs/engineering/WS-12-delivery-review.md sections 4, 5 and 6 hold the full transcript, the clean-checkout proof and the stated AC-12/AC-14 manual procedure.",
+    "DEFECT FOUND AND FIXED THIS RUN: the ci.yml header asserted there is no package-lock.json while the lockfile is committed. Corrected at 6d884f1, then the whole clean-checkout proof was re-executed at that revision rather than carried over."
+  ],
+  "knownRisks": [
+    "R-01 AC-16/AC-17 NOT FULLY CLOSED: the contrast evidence measures the DECLARED palette, not rendered pixels. The criteria ask for ratios sampled from the background actually rendered. Closing this needs ADR-005's browser tier (WS-10). Recorded gap, not a pass.",
+    "R-07 NO BROWSER TIER SHIPPED, stated plainly with its cost: ADR-005 proposed Playwright and WS-03 recorded its Chromium binary never downloaded here. No dependency was added, because a stated command that cannot install is worse than an absent one. COST: AC-12 (keyboard-only journey) has no machine evidence at all, AC-14 has only its focus-colour pair measured, and the rendered-pixel half of AC-16/AC-17 is unmeasured. Section 6 states the manual procedure for all three.",
+    "R-02 core.autocrlf=true with no .gitattributes: byte totals and src/ digests are checkout-dependent on Windows. perf:artifact reported 43842 B in the clean checkout against WS-11's and WS-08's 42517 B; request count 17, non-200 count 0 and disk-equals-wire are unaffected. A root .gitattributes is outside the write boundary, so raised and not created.",
+    "R-03 the engines floor >=20.11.0 is declared, not measured: everything ran on Node v22.23.2 only. The CI matrix pins 20.11.0 to exercise it, but that workflow has never executed.",
+    "R-04 the JUnit totals are XML comments rather than testsuite attributes: a parser requiring tests= and failures= reads zero. Element counts and the process exit code are correct and are what CI gates on.",
+    "R-05 no cold acquisition of Playwright was ever observed; nothing evidences that a fresh machine could obtain the package or the browser build.",
+    "R-06 npm ci is in no stated procedure: the lockfile is authentic but pins an empty dependency set.",
+    "R-08 the CI workflow has NEVER RUN. Its own header says so. What is evidenced is that the two commands it runs executed from a clean checkout.",
+    "FINDING, RECORDED NOT FIXED: src/package.json is now redundant, since WS-12 set type module at the root, exactly as WS-03 predicted. It is NOT deleted because src/ is sealed at WS-03. It is harmless rather than inert - as the nearest package.json to src/**, it is what Node actually resolves against. Disposal belongs to whichever workstream owns src/.",
+    "The a11y sha256 is per-run, not per-revision, because generatedAt is embedded. The digest attests the artifact for deposition; the reproducible values are the 33 rows and their ratios, identical across both proof runs.",
+    "AC-30 requires deposition under .development-os/evidence/ with kind, sha256 and sourceRevision. That path is outside this workstream's write boundary (AC-28), so WS-12 deposited nothing there; the artifacts carry all three fields ready for deposition. WS-01 blocker B-02 records the reading under which the two criteria are consistent."
+  ],
+  "completedAt": "2026-08-11T12:31:06.368Z"
+}

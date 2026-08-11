@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "1.0.0",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "workstreamId": "WS-11",
+  "ownerRole": "ENG-11",
+  "producerActorId": "actor-eng-11",
+  "status": "completed",
+  "verificationDisposition": "not_applicable",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "changedComponents": [
+    "docs/engineering/WS-11-performance-review.md (new)",
+    "tests/perf/simulation-cost.mjs (new, measurement harness, asserts nothing)",
+    "tests/perf/artifact-weight.mjs (new, measurement harness, asserts nothing)",
+    "src/ unchanged: delivery sealed at WS-03, driven unmodified through public entry points"
+  ],
+  "commands": [
+    "node --expose-gc tests/perf/simulation-cost.mjs",
+    "node tests/perf/artifact-weight.mjs 4291",
+    "node --test \"tests/unit/*.test.mjs\"",
+    "grep sweep over src/ for console/error-handler/PerformanceObserver/egress/storage call sites",
+    "one-line node script: BFS the ES module graph from src/main.js reporting module count and max dependency depth",
+    "one-line probe in a scratch dir: confirm node --test default discovery selects tests/unit/*.test.mjs and skips tests/perf/*.mjs"
+  ],
+  "evidence": [
+    "MACHINE: AMD Ryzen 7 4800H, 16 cores, 15.4 GiB, win32 10.0.28000 x64, Node v22.23.2 (V8 12.4.254.21-node.56). hrtime.bigint self-cost 0.089 us. Developer workstation, not a target-user device.",
+    "FRAME COST advanceRun(), 500000 samples at 60 Hz step after 50000 warm-up: mean 0.212 us per-frame-timed / 0.114 us untimed-batch; p50 0.200; p95 0.200; p99 0.400; p99.9 1.100; max 260.9 (single scheduler/GC outlier); min 0.100. Obstacles during sample: mean 2.04, max 4.",
+    "OBSTACLE SCALING linear: 0 obs 0.128 us/frame; 1 0.164; 2 0.185; 4 0.200; 8 0.224; 16 0.297; 32 0.468; 64 0.842; 128 1.612. Marginal 0.012 us per obstacle. Three O(n) passes, no nesting.",
+    "ALLOCATION 108000 frames = 30 simulated minutes, gc-settled heap: 4.336 to 4.337 MiB, drift 0.002 MiB. Obstacles bounded 0-3. Run-state own fields still 9. stepObstacles() filter rebuild is a steady garbage rate, not growth. NOTHING in the run loop grows unbounded.",
+    "SCORE TRACE grows unbounded BY DESIGN (AC-22): 200000 records = 11.12 MiB settled, about 58.3 B/record, one record per run end, dies with the JS realm.",
+    "FRAME-RATE INDEPENDENCE (ADR-002 section 5) VERIFIED: identical 60000 ms at 30/60/144 fps gives score 600/600/600, divergence 0 points (exact, not approximate). distancePx spread 4.48 px = 0.012%.",
+    "JUMP ARC IS NOT frame-rate independent: apex 134.44 px at 30 fps, 141.67 at 60, 145.88 at 144 = 11.44 px / 8.5% spread; airtime 666.67/666.67/673.61 ms. Semi-implicit Euler arithmetic, not a defect. Character 66 px, tallest cactus 82 px. Measured, not judged.",
+    "DELTA-TIME CLAMP CONFIRMED, PHYSICS.maxStepSeconds 0.05: engages at exactly 50 ms and holds flat. 60000 ms gap advances world 36.00 px instead of 43200; 3600000 ms gap also 36.00 px instead of 2592000 (72000x reduction). Residual 20.13 to 36.00 px is the speed ramp reaching the 720 px/s cap, not clamp leakage. Cactus at x=410 across thirty consecutive 5000 ms gaps steps 388.3/363.8/336.5/306.5/273.8/238.3/202.3/166.3/130.3/94.3/58.3/22.3 - stepped past one clamped step at a time, never skipped. Corroborates WS-05's independent 36 px.",
+    "RECOVERY (AC-23): nothing survives reload - score, run, position, obstacles and the whole trace are lost; page comes up idle as on a first visit. Zero call sites for localStorage/sessionStorage/indexedDB/document.cookie/caches/navigator.storage/serviceWorker/BroadcastChannel/history.pushState/URLSearchParams/fetch/sendBeacon (the only textual matches are two doc comments stating their absence). Nothing to corrupt, migrate, back up or restore.",
+    "OBSERVABILITY PRESENT: data-game-state on #dino-dash, frozen window.dinoDash accessor (getState/getScoreTrace/getBackgroundVariations/version), bubbling dino-dash:statechange CustomEvent with detail from/to - all emitted from the single transition() writer, all read-only from outside. ABSENT, zero call sites each: console.*, window.onerror, error/unhandledrejection listeners, reportError, try/catch anywhere, PerformanceObserver, performance.mark/measure, fetch/sendBeacon/XHR/WebSocket, any RUM or crash SDK. No logging, no error reporting, no metrics, no alerting. ENG-11 ADDED NONE.",
+    "ARTIFACT re-derived independently, not cited: 17 resources, 42517 B on disk AND 42517 B over 17 real HTTP GETs, 0 non-200, 0 cross-origin refs (only href=data:, favicon stub). WS-08's figures CONFIRMED EXACTLY. Disk equals wire proves no build/minify/compression. src/ total on disk 42559 B; the 42 B delta is src/package.json, never fetched. Module graph 15 modules, max dependency depth 3. Serial loopback GETs 237.7 ms - a measurement-loop property, NOT a page load time.",
+    "GATE-PERFORMANCE required:false, NOT ENGAGED. Declared evidence unproducible: budget results presuppose a budget that DEVREQ states is UNKNOWN and whose own verification clause requires rejecting any budget asserted before a device baseline; regression comparison presupposes a prior baseline and cacfcb0 has no predecessor - these numbers ARE the first baseline; load results presuppose concurrency and there is no server. Recorded gap, not a pass; stays open with WS-01 R-02.",
+    "GATE-RELIABILITY required:false, NOT ENGAGED. Service objectives presuppose a service (none: no server, no deployment, no uptime, no error budget, no incident surface); telemetry does not and must not exist (AC-24 forbids egress, AC-01 forbids console output, AC-25 forbids identity); recovery evidence exists only degenerately - nothing persists, reload equals a first visit. Recorded gap, not a pass. Neither gate waived, back-filled or reinterpreted into a pass.",
+    "UNIT TIER UNAFFECTED: node --test tests/unit/*.test.mjs gives 61 passed, 0 failed. Both harnesses are deliberately not named *.test.mjs; a scratch-dir probe confirmed node --test default discovery selects the unit file and skips both perf files. Neither harness asserts any threshold.",
+    "NO THRESHOLD INVENTED anywhere - not in the document, not in the harnesses, not as a test assertion, not implied by a comparison. Budget remains the product owner's to set; docs/engineering/WS-11-performance-review.md carries a lead section titled READ THIS FIRST - these are observations, not budgets, plus a section stating what the owner would need to choose one."
+  ],
+  "knownRisks": [
+    "PERF-R-01 jump apex varies with refresh rate: 134.44 px at 30 fps vs 145.88 px at 144 fps, 8.5% spread against a 66 px character and 82 px tallest cactus. Touches the contract's jump timing is fair phrase directly. Measured, not judged; no threshold asserted, no code changed.",
+    "PERF-R-02 the render half of the frame is unmeasured. canvas-renderer.js and hud.js need a real canvas and layout engine and cannot be driven in Node. Any total frame-time budget needs a browser-tier measurement that does not yet exist; the 0.212 us figure is simulation only and must not be read as the whole frame.",
+    "PERF-R-03 all figures come from one developer workstation, not a target-user device, and are likely faster than the low end of the real audience. Single-machine figures do not transfer; this is exactly why the contract requires a device baseline before a budget.",
+    "PERF-R-04 the score trace grows unbounded by design (about 58.3 B per run end). Harmless at Unit 1 scale; inherited by Unit 3 at the seam ADR-002 names.",
+    "PERF-R-05 GATE-PERFORMANCE and GATE-RELIABILITY are recorded gaps, not passes, and stay open into later units alongside WS-01 R-02, ISS-20260809-019 and DD-0008 GAP 2.",
+    "WS-05's background-tab scoring property (60 s hidden equals +600 points at zero risk) is referenced and its 36 px physics half corroborated, but is NOT re-accepted, re-scoped or reclassified by ENG-11; the owner's DEC-20260809-001 acceptance is untouched.",
+    "No package.json exists at this revision - WS-12 has not run - so both harnesses are invoked as bare node commands and are not yet reachable through any npm script. ENG-12 may wish to expose them, but they must never be added to the pass/fail test script."
+  ],
+  "completedAt": "2026-08-11T09:34:41Z"
+}

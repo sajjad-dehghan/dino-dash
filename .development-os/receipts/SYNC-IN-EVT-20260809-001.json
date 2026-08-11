@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0.0",
+  "receiptId": "SYNC-IN-EVT-20260809-001",
+  "direction": "product_to_development",
+  "contractType": "development_request",
+  "contractId": "DEVREQ-EVT-20260809-001",
+  "contractDigest": "6586f10d8f0738c352008388ffb207da437c577a2579456a63807316bd43a926",
+  "sourceRevision": "846b96a09a52bdee9d78d59e91a6e2656d511149",
+  "storedAt": ".development-os/inbox/DEVREQ-EVT-20260809-001.json",
+  "createdAt": "2026-08-10T15:19:57.758Z"
+}

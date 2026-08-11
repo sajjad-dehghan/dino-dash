@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "workstreamId": "WS-02",
+  "ownerRole": "ENG-02",
+  "producerActorId": "actor-eng-02",
+  "status": "completed",
+  "verificationDisposition": "not_applicable",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "changedComponents": [
+    "docs/architecture/decisions/ADR-001-browser-target-and-runtime-baseline.md",
+    "docs/architecture/decisions/ADR-002-unit-1-rendering-state-model-and-module-layout.md",
+    "docs/architecture/decisions/ADR-003-score-trace-field-contract.md",
+    "docs/architecture/decisions/ADR-004-observability-affordances-state-signal-and-background-enumeration.md",
+    "docs/architecture/decisions/ADR-005-build-and-test-toolchain.md",
+    "docs/architecture/unit-1-system-impact.md",
+    "docs/architecture/unit-1-ac-traceability.md",
+    "docs/architecture/unit-1-architecture-notes.md"
+  ],
+  "commands": [
+    "cd /d/os-test/dino-dash-app && git status --porcelain",
+    "cd /d/os-test/dino-dash-app && git add docs/architecture",
+    "cd /d/os-test/dino-dash-app && git diff --check",
+    "cd /d/os-test/dino-dash-app && git diff --cached --check",
+    "cd /d/os-test/dino-dash-app && git -c user.name=\"ENG-02 Solution Architecture\" -c user.email=\"actor-eng-02@dino-dash.local\" commit -q -m \"WS-02 Solution Architecture for DEVREQ-EVT-20260809-001: ADRs, system impact, AC traceability\"",
+    "cd /d/os-test/dino-dash-app && git show --stat --format= HEAD",
+    "cd /d/os-test/dino-dash-app && git log -1 --format=\"%H%n%an | %ae%n%s\""
+  ],
+  "evidence": [
+    "Commit 17037821bfc12d27ec4c80b05e215caffaf2ff24 on branch codex/evt-20260809-001, parent 2098741e9e25d19dc1251d3239b6a72436ed6ca5, 8 files changed, 1130 insertions, 0 deletions, all under docs/architecture/",
+    "GATE-ARCHITECTURE evidence kind 'architecture decision records': docs/architecture/decisions/ADR-001 through ADR-005, each following the house structure of engineering/architecture/decisions/ADR-000-template.md (Context, Options considered, Decision, Consequences and trade-offs, Migration/rollback/evidence)",
+    "GATE-ARCHITECTURE evidence kind 'system-boundary review': docs/architecture/unit-1-system-impact.md, covering the single container, the single trust boundary, data classes, the eight contract impact domains, what is explicitly out of scope, and WS-02 write-boundary compliance",
+    "Score-trace field contract (WS-01 dependency D-02, D-10; AC-19 to AC-22, AC-29) fixed in ADR-003: exactly three fields, score integer points equal to the run-end display, endedAt as a UTC ISO-8601/RFC-3339 string with the literal Z designator produced by Date.prototype.toISOString(), sessionLengthMs as an integer millisecond delta of performance.now() readings reached through an injectable src/engine/clock.js; one record appended per running-to-run-end transition; chronological order; page-session scope; discard on unload by construction because no storage or network API exists anywhere in the delivery",
+    "Documented stable in-page accessor (ADR-003 section 4): window.dinoDash frozen namespace with version, getScoreTrace() returning copies, getState(), getBackgroundVariations(); installed synchronously during bootstrap before the idle state is presented; read-only, side-effect free, bound to no key",
+    "AC-01 contract amendment applied and attributed in ADR-001, citing DEC-20260809-001 (product workspace events/DEC-20260809-001-owner-disposition.md, decision_maker_actor_id human-product-owner, decided_at 2026-08-09T11:55:53Z, status approved): one browser is sufficient and it is Chromium; Gecko is an open item and no run may be blocked or failed for missing Gecko evidence; the exported AC-01 verification text is superseded, not rewritten; WS-01 blocker B-06 is closed on that basis",
+    "Observability affordance 1 (AC-26), ADR-004 section 1: closed three-value state set idle/running/run-end emitted from the single transition() writer through three modes, data-game-state on the game root, window.dinoDash.getState(), and a bubbling CustomEvent dino-dash:statechange carrying detail {from,to}; recorded explicitly as a claim by the implementation rather than independent proof, requiring a paired DOM assertion that no other view exists",
+    "Observability affordance 2 (AC-16, AC-17), ADR-004 section 2: src/render/palette.js as the sole source of every colour in the delivery, exporting a closed ordered background-variation enumeration selected deterministically by score threshold, discrete swaps only with no tweening or randomization, fully opaque text backing plates so the background rendered behind text is exactly one enumerated colour, exposed via window.dinoDash.getBackgroundVariations() so the AC-16 and AC-17 measurement matrices are finite and complete by construction",
+    "Unit 1 architecture (ADR-002): canvas play field plus DOM UI layer for all text, aria-hidden non-focusable canvas; three states with a four-row transition table where unlisted transitions are no-ops; reconstruct-never-scrub reset via createRunState() with exactly two things outliving a run (the trace array and immutable config); module layout under src/ with an enforced DOM-free testability boundary over src/game/**, src/trace/**, src/engine/clock.js and src/render/palette.js; delta-time simulation with a clamped maximum step and no asserted performance budget",
+    "Build and test toolchain decision (ADR-005) for WS-12 and WS-10: no build step and native ES modules served from a localhost origin, zero runtime dependencies, node --test with a file-writing machine-readable reporter for the DOM-free unit tier, @playwright/test with bundled Chromium for the browser tier, Node 20 or newer, four separately stated commands with the install-step network use distinguished from the game's zero network use, and boundary-safe placement of the Playwright config under tests/ rather than the repository root",
+    "AC traceability to architecture: docs/architecture/unit-1-ac-traceability.md maps all 30 acceptance criteria to the enabling ADR, the specific mechanism, and the tier that can assert it, and explicitly does not re-map WS-01's AC-to-workstream table",
+    "Write-boundary compliance (AC-28): the changed-file inventory for this revision is 8 files, all under docs/architecture/; nothing under engineering/, .development-os/, DEVELOPMENT.md, development-os.config.json or D:/os-test/dino-dash was created or modified; the product workspace git status is byte-identical to its state at workstream start; engineering/architecture/system-context.md and engineering/architecture/decisions/ADR-000-template.md were read only; none of the contract-allowed but Unit-1-unneeded paths (app, apps, packages, services, database, migrations, infrastructure) were created; the pre-existing intake modifications recorded in WS-01 blocker B-07 were left unstaged and uncommitted",
+    "git diff --check and git diff --cached --check both returned clean (the contract's stated validation command)"
+  ],
+  "knownRisks": [
+    "AR-01 endedAt offset interpretation is unsettled and sits on the Unit 3 seam: ADR-003 reads AC-19's 'ISO-8601 string with an explicit UTC offset' as UTC with the literal Z designator. A verifier requiring a numeric plus-or-minus HH:MM local offset would find Z insufficient. The code change is trivial but the contract change is not, because Unit 3 inherits whichever is chosen. Must be settled before ENG-03 implements.",
+    "AR-02 the score trace is entirely client-produced and every field is forgeable from a browser console; the record attests to nothing and its value is shape, not integrity. No anti-tamper measure was designed into Unit 1 by deliberate decision. The risk was accepted by the product owner in APR-870DC901FD68 and restated in DEC-20260809-001, bounded to Units 1 and 2, with server-side validation required from Unit 3 and to be designed at Unit 3. No workstream may re-accept it.",
+    "AR-03 the state signal is a claim by the implementation, not independent proof: a view that never updated data-game-state would not appear in the AC-26 key sweep. ENG-10 must pair the signal with a DOM assertion that no leaderboard, score table, catalogue, settings, profile, lobby or presence view exists in the document.",
+    "AR-04 the palette-as-single-source rule is unenforced by tooling; a single hex literal in CSS or in the renderer silently invalidates the AC-16 and AC-17 completeness claim. Mitigation is an automated assertion that no colour literal appears outside src/render/palette.js plus an ENG-01 review item under GATE-CODE-REVIEW.",
+    "AR-05 node_modules cannot be git-ignored from inside the write boundary: no root .gitignore exists at the base revision and the repository root is not a writable path, while node_modules is on the contract's own prohibitedPaths. Handling is to never git add it and to build the AC-28 inventory from the workstream commits per WS-01 B-07. If ENG-12 concludes a root .gitignore is necessary, that is a write outside both the narrowed set and the contract's allowedPaths and must be escalated to Product Operations, not created quietly.",
+    "AR-06 the opaque-plate and no-tweening rules constrain visual design. If the owner judges the result insufficiently 'modern and colourful' under final_user_visible_acceptance, the remedy is more saturated enumerated palettes and richer motion and shape, not relaxing the opacity or enumeration rules, which would reopen AC-16 and AC-17 completeness. AC-18's judgement half remains the owner's and no engineering workstream can close it.",
+    "AR-07 no non-visual representation of gameplay: the canvas is aria-hidden and conveys the play field visually only. No acceptance criterion requires a screen-reader-accessible representation of gameplay. Recorded as a limitation, not as a satisfied requirement.",
+    "AR-08 the performance requirement remains unquantified. No numeric frame-rate or input-latency budget exists in any artifact and the contract's NFR is explicitly UNKNOWN. Architecture makes the score frame-rate independent and asserts no budget. Carried open, consistent with WS-01 R-02.",
+    "Carried from WS-01 and not resolvable by ENG-02: B-01 (AC-30 needs a runnable command from a clean checkout, and install-time network use must be stated separately from the game's zero network use), B-02 (AC-30's evidence location under .development-os/ read against AC-28's prohibition, which ENG-01 reads as applying to application code and which is a contract defect to escalate if ENG-15 reads it as absolute), and B-05 (AC-21's OS-clock-change procedure may not be executable; the injected clock in ADR-003 section 2 is the inspectable substitute and must be disclosed as a substitute, never reported as the manual procedure).",
+    "ENG-02 did not disposition its own GATE-ARCHITECTURE and issued no verification disposition; only ENG-15 at WS-14 does so. No game code, no package.json, no lockfile and no CI workflow were created; every path named in ADR-002 and ADR-005 is a specification for WS-03 and WS-12, not an existing file."
+  ],
+  "completedAt": "2026-08-10T15:49:55Z"
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "workstreamId": "WS-07",
+  "ownerRole": "ENG-07",
+  "producerActorId": "actor-eng-07",
+  "status": "completed",
+  "verificationDisposition": "not_applicable",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "changedComponents": [
+    "docs/engineering/WS-07-data-review.md (created, 616 lines; only file written)"
+  ],
+  "commands": [
+    "git rev-parse HEAD",
+    "node --version",
+    "find src -type f | wc -l",
+    "git ls-files | wc -l",
+    "node analytics-scan.cjs (18 files under src/: 34 vendor, 25 beacon/signal, 46 ML/AI tokens, raw and comment-stripped)",
+    "grep -rFoi -- \"ga\" src/ | wc -l",
+    "grep -rnowiE \"ga\" src/",
+    "grep -rn -iE \"track|beacon|gradient\" src/",
+    "grep -rFoi model src/ | wc -l",
+    "grep -rFoi model tests/ | wc -l",
+    "git ls-files -z | xargs -0 grep -inoE \".{0,34}model.{0,34}\" (every occurrence of the word model, for sense disambiguation)",
+    "git ls-files | grep -inE (filename sweep for vendors, weight formats, wasm, notebooks, parquet/avro, pipeline tooling)",
+    "ls -d database migrations infrastructure services app apps packages",
+    "ls -l package.json package-lock.json",
+    "git ls-files .github",
+    "grep -rniE \"analytic|telemetr|beacon|gtag|dataLayer|tensorflow|onnx|wasm|model|inference|embedding\" tests/",
+    "node --test tests/unit/*.test.mjs",
+    "node -e (gates.json gate count, gates owned by ENG-07, domain list; roles.json cross-reference for roles owning no gate)",
+    "node analytic-capacity.mjs (drives the delivered score-trace.js, clock.js and score.js over five runs with injected clocks, wall clock moved back one hour during run 4)",
+    "git add docs/engineering/WS-07-data-review.md",
+    "git diff --check",
+    "git -c user.name=\"ENG-07 Data, Analytics and AI\" -c user.email=\"actor-eng-07@dino-dash.local\" commit -m \"WS-07 Data, Analytics and AI for DEVREQ-EVT-20260809-001: recorded not-applicable determination\" -- docs/engineering/WS-07-data-review.md"
+  ],
+  "evidence": [
+    "src/, all 18 files: 34 analytics/telemetry vendor tokens raw=0 after-strip=0 - zero even before stripping, unlike WS-06's 9 raw storage hits. 25 beacon/signal tokens raw=3 after-strip=0: simulation.js:24 (English verb) plus the main.js:6 and score-trace.js:10 comment blocks naming sendBeacon to state it is unused. No PerformanceObserver, onerror, ReportingObserver, NEL or web-vitals. Token ga: 37 substring hits, zero word-boundary.",
+    "src/: 46 ML/AI tokens raw=3 after-strip=2. Both survivors are DOM HTMLElement.dataset - main.js:39 root.dataset.gameState, hud.js:38 root.dataset.backgroundVariation - DOMStringMap writes for ADR-004's state signal, not a training dataset. The third, gradient at game.css:8, is a comment forbidding CSS gradients behind text. Zero tensorflow, onnx, .onnx, .tflite, wasm, WebAssembly, inference, embedding, predict, train, weights. Repository-wide: 3 filename matches across 78 tracked files, all false positives; zero weight files of any format, zero .wasm, notebooks, parquet/avro or pipeline tooling; no root package.json or lockfile in which an analytics SDK could be declared.",
+    "The word model: 0 in src/ (case-insensitive), 0 under tests/. Repository-wide four senses, none machine learning - state model (7), data model (3), threat model (8), auth/lifecycle/no-model prose plus role strings (12). The most model-sounding strings (model persistent data; evaluate model quality and data provenance) are the ENG-06/ENG-07 role strings in roles.json.",
+    "The only data produced: the in-memory score trace - RECORD_FIELDS = endedAt, score, sessionLengthMs; 3 fields; 74 JSON bytes; 0 nested values. score integer points; endedAt ISO-8601 UTC with literal Z from the wall clock; sessionLengthMs integer ms from monotonic performance.now deltas. One record per running-to-run-end transition into a module-scope array, reaching no store and no destination.",
+    "GATE ownership: 15 gates, 15 domains, gates owned by ENG-07 = 0 (empty array). No GATE-DATA/ANALYTICS/MODEL/AI and no data_analytics_ai domain. Of 15 roles exactly three own no gate: ENG-05, ENG-07, ENG-12. No gate engaged, no required:true gate affected. GATE-PRIVACY-COMPLIANCE is ENG-09's and required:false, neither claimed nor pre-answered; ENG-07 owns no acceptance criterion. data-ai.md exists; its model-evaluation and analytics-contract items are vacuous.",
+    "Two clocks, measured (the analysis specifically ENG-07's): five runs through the delivered createClock and createScoreTrace, wall clock moved back one hour during run 4. Run 4's sessionLengthMs is correct at 63000 ms (AC-21 holds) while endedAt moved, so endedAt minus sessionLengthMs gives a run-start instant wrong by exactly -3600000 ms, the other four showing 0 ms - it passes on an undisturbed clock and fails precisely when the clock moves. Sorting those five on endedAt gives 4 5 1 2 3: 5 of 5 out of chronological position.",
+    "No individuation: two equal-duration runs on two devices give byte-identical records (score 120, endedAt 2026-08-11T09:00:12.000Z, sessionLengthMs 12000); fields naming a device, player or session = 0, so no dedup, no per-record reference, no join key. No device marker (WS-04: navigator and userAgent at 0), so two traces concatenate but never merge. No schema version - window.dinoDash.version is the accessor's.",
+    "Countability: runs per page session = array length, exact. Distinct page sessions, devices and people = not derivable from the records at all (AC-25). Records after unload = 0 (AC-22/23), off-device = 0 (AC-24). How many people play is unanswerable by construction, not approximately answerable - there is no sample. This follows from the owner's no-identity, no-network, no-persistence decisions, removed from scope not deferred; not a gap to fix, and no id, fingerprint or counter is proposed.",
+    "Boundary: commit b35af29 touches one path, docs/engineering/WS-07-data-review.md, 616 insertions; git diff --check clean; nothing under engineering/, .development-os/, DEVELOPMENT.md, development-os.config.json or in D:/os-test/dino-dash touched. Unit tier green: 61 tests, 61 pass, 0 fail; no test asserts any vendor or ML token (coverage note for WS-10)."
+  ],
+  "knownRisks": [
+    "L-01 - scans are static over src/, tests/ and the tracked file list, not the browser network panel; AC-24's runtime verification is WS-10's.",
+    "L-02 - a token scan cannot prove the absence of an unnamed vendor; 105 tokens were checked. The gap closes structurally: WS-04 measured zero network APIs and zero external specifiers, so a snippet would have nowhere to send.",
+    "L-03 - the two-clock analysis uses injected clocks, not a moved OS clock (the substitute WS-01 B-05 anticipates). Disclosed as a substitute; it does not discharge AC-21.",
+    "L-04 - the endedAt Z-designator risk is carried, not closed (ADR-003, WS-04, WS-06); no reformatting recovers a local offset never captured.",
+    "L-06 - not_applicable is scoped to Unit 1 at this revision: neither a judgement that Dino Dash will never have analytics or a model, nor a finding that Unit 1 should have had measurement.",
+    "L-07 - the workspace's open privacy obligation is untouched; Unit 1 collecting no personal data closes none of it. GATE-PRIVACY-COMPLIANCE is ENG-09's."
+  ],
+  "completedAt": "2026-08-11T08:47:36Z"
+}

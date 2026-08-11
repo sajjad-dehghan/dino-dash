@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "1.0.0",
+  "gateId": "GATE-API-COMPATIBILITY",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "relevantWorkstreamIds": [
+    "WS-04",
+    "WS-14"
+  ],
+  "workstreamRuns": [
+    {
+      "workstreamId": "WS-04",
+      "ownerRole": "ENG-04",
+      "status": "completed",
+      "verificationDisposition": "not_applicable",
+      "commands": [
+        "git rev-parse HEAD",
+        "git log --oneline -3",
+        "node --version",
+        "grep -rnoE \"fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|localStorage|sessionStorage|indexedDB|IndexedDB|document.cookie\" src/ | sort | uniq -c",
+        "node -e \"comment-stripping token scan over src/, printing raw and after-comment-strip counts per token\"",
+        "for t in serviceWorker manifest Worker( postMessage BroadcastChannel beforeunload unload Notification geolocation credentials; do grep -rFo -- \"$t\" src/ | wc -l; done",
+        "grep -rnoE '(src|href|action|formaction|data|poster|srcset)=\"[^\"]*\"' src/index.html",
+        "grep -rnoE '@import|url\\(' src/styles/game.css",
+        "grep -rnoE 'crossorigin|integrity|<iframe|<script' src/index.html",
+        "grep -rnoE \"\\bimport [^;]*from '[^']*'\" src/ | grep -vE \"from '\\.{1,2}/\"",
+        "grep -rhoE \"from '[^']*'\" src/ | sort | uniq -c",
+        "grep -rn \"addEventListener\" src/",
+        "for t in \"<input\" \"<form\" \"<select\" \"<textarea\" nickname login profile account userId playerId deviceId sessionId navigator userAgent; do grep -rFoi -- \"$t\" src/ | wc -l; done",
+        "grep -rn \"RECORD_FIELDS\\|Object.freeze\" src/trace/score-trace.js",
+        "node --test tests/unit/source-hygiene.test.mjs",
+        "git add docs/engineering/WS-04-backend-review.md",
+        "git -c user.name=\"ENG-04 Backend, API and Integration\" -c user.email=\"actor-eng-04@dino-dash.local\" commit -m \"WS-04 Backend, API and Integration for DEVREQ-EVT-20260809-001: recorded not-applicable determination with source-level absence evidence\""
+      ],
+      "evidence": [
+        "Determination recorded at docs/engineering/WS-04-backend-review.md, reviewed revision bf5ac182c1279d380cbc7e4dbaa7a923875416fd, branch codex/evt-20260809-001. Environment: Windows 11, Git Bash GNU grep, Node v22.23.2, run from D:/os-test/dino-dash-app.",
+        "Network/storage API scan over src/ (18 files): raw textual hits 15, executable occurrences after comment-strip 0. Per token, raw to after-comment-strip: fetch 2 to 0, XMLHttpRequest 2 to 0, WebSocket 2 to 0, EventSource 0 to 0, sendBeacon 2 to 0, localStorage 2 to 0, sessionStorage 2 to 0, indexedDB 1 to 0, IndexedDB 1 to 0, document.cookie 1 to 0, http:// 0 to 0, https:// 0 to 0, importScripts 0 to 0, navigator. 0 to 0.",
+        "All 15 raw hits are block-comment text on four lines: src/main.js:6-7 (module header disclaiming the APIs) and src/trace/score-trace.js:10-11 (ADR-003 no-persistence-path note). The comment stripper is the same one tests/unit/source-hygiene.test.mjs uses.",
+        "Adjacent egress and background-execution scan over src/: serviceWorker 0, manifest 0, Worker( 0, postMessage 0, BroadcastChannel 0, beforeunload 0, unload 1, Notification 0, geolocation 0, credentials 0. The single unload hit is src/trace/score-trace.js:12, the comment recording that no unload handler exists per ADR-003 section 3.",
+        "src/index.html contains exactly three URL-bearing attributes: line 7 href=data:, (inline empty-data favicon, no request), line 8 href=styles/game.css (relative same-origin), line 60 src=main.js (relative same-origin, script type=module). No iframe, no second script, no crossorigin or integrity attribute. src/styles/game.css contains zero @import and zero url( occurrences.",
+        "Module graph is closed: 20 static import specifiers in src/, all ./ or ../; zero bare or absolute specifiers; zero dynamic imports. Nothing can be pulled in after the initial load.",
+        "Complete event surface is two listeners: src/input/keyboard.js:49 keydown and src/main.js:112 resize. No online/offline, visibilitychange, pagehide, message or storage listener exists.",
+        "Identity-surface scan over src/: <input 0, <form 0, <select 0, <textarea 0, nickname 0, sign in 0, sign-in 1, login 0, profile 0, account 0, userId 0, playerId 0, deviceId 0, sessionId 0, navigator 0, userAgent 0. The single sign-in hit is src/index.html:12, inside a markup comment. Trace record frozen to three fields at src/trace/score-trace.js:18 (RECORD_FIELDS = endedAt, score, sessionLengthMs); accessor installed read-only at src/main.js:94-108 via Object.defineProperty with writable false, configurable false.",
+        "node --test tests/unit/source-hygiene.test.mjs: 10 tests, 10 pass, 0 fail. Tests in ENG-04's domain: AC-22/AC-23 no persistence API appears anywhere in src/; AC-24 no network API appears anywhere in src/; AC-25 no identity surface exists in the markup. Ran with no npm ci and no node_modules; there is no root package.json at this revision.",
+        "GATE-API-COMPATIBILITY (engineering/quality/gates.json, owner ENG-04) is required:false with evidence contract diff and consumer compatibility evidence; neither exists nor can exist since there is no API contract at either the base or the delivery revision and no consumer.",
+        "Basis for the determination: DEVREQ-EVT-20260809-001 canonical non-goals text removes persistence, network, identity and any score table from Unit 1 scope; AC-24, AC-22/AC-23, AC-25; ADR-002 sections 3 and 5; ADR-003 sections 1, 3, 5, 6; ADR-005 sections 1, 4, 6; WS-01 coordination section 1 (WS-04 not_applicable, sequence position 4) and D-09/R-03.",
+        "Commit 290f45c907082b9985521ec851febb187978c2d5 changes exactly one file (458 insertions). Pre-existing modified engineering/taskboard/workstreams.csv and untracked .development-os/ intake files were left unstaged, per WS-01 B-07."
+      ],
+      "knownRisks": [
+        "L-01 - This is a static, source-level check, not a runtime observation. Zero call sites is strong evidence for zero requests, but AC-22, AC-23 and AC-24 are written against the browser network panel and storage inspector. That browser-tier evidence is WS-10's under GATE-AUTOMATED-TESTS and is not claimed here.",
+        "L-02 - The scan covers src/ only, which is the whole of what the browser loads (ADR-005 section 1: no build step, the source is the running artifact). tests/ and dev-time tooling are outside this determination; tests/tools/static-server.mjs is a test-time process, not part of the game.",
+        "L-03 - Comment text names the very APIs it disclaims, so a naive grep of src/ returns 15 hits that reduce to zero executable occurrences. A reviewer must apply the comment strip or the source-hygiene tier before concluding anything.",
+        "L-04 - window.dinoDash deliberately widens the page's global surface (ADR-003 section 4). It is read-only, side-effect free and not keyboard-reachable, so it is an observation surface and not an integration point, but it is the one globally reachable name the delivery adds; a later unit adding a setter would convert it into an attack surface.",
+        "L-05 - Client-side score forgeability is already accepted by the owner in DEC-20260809-001, bounded to Units 1 and 2, with server-side validation required from Unit 3 and to be decided at Unit 3. Recorded as inherited context; ENG-04 does not re-accept it.",
+        "L-06 - AC-24 governs the running game, not the toolchain. A future clean-checkout install step (npm ci plus a Playwright browser download) touches the network at install time. WS-01 B-01 and ADR-005 section 4 require the install command and the test command to be stated as distinct steps or a verifier will read the evidence as self-contradictory.",
+        "L-07 - not_applicable is scoped to Unit 1 at revision bf5ac18. Units 2 through 5 are not contracted and nothing in this record pre-clears them. Unit 3's needs from ENG-04 are stated in the document as open questions only: a submission contract, a server-side validation position, an identity decision that does not exist yet, the fact that endedAt carries no local offset, and the live AC-19 interpretation risk that Z may be read as insufficient against a numeric offset - one formatting function in Unit 1 but a data migration once a server persists it.",
+        "L-08 - ENG-04 owns none of AC-22 to AC-25; WS-01 section 3 assigns them to WS-03 with WS-09 and WS-10 contributing. The per-AC findings in the document are domain review findings, not dispositions. Only ENG-15 at WS-14 issues the delivery's verification disposition."
+      ]
+    },
+    {
+      "workstreamId": "WS-14",
+      "ownerRole": "ENG-15",
+      "status": "completed",
+      "verificationDisposition": "passed",
+      "commands": [
+        "git clone --no-hardlinks into a temp dir outside both repos, then git checkout d3560a81",
+        "npm test gives exit 0",
+        "npm run evidence:a11y gives exit 0",
+        "node tests/tools/ac-coverage.mjs gives exit 0",
+        "npm run perf:artifact gives exit 0",
+        "npm run perf:simulation gives exit 0",
+        "node tests/security/sbom.mjs, secret-scan.mjs and surface-scan.mjs give exit 0, 0, 0",
+        "npm test at bd43f5f in a pre-WS-10 clone gives exit 0, 61 tests",
+        "git rev-parse <commit>:src for all 18 commits",
+        "git log --name-only 32d94b5..HEAD for the boundary inventory",
+        "node --input-type=module live F-01 execution against src/game/state-machine.js"
+      ],
+      "evidence": [
+        "SRC SEAL VERIFIED: all 16 commits from ea12453 (WS-03) to HEAD resolve src tree 0566d5d39599d0cdf374b5dee27d22afdb544c41; the 2 earlier commits have no src path. No workstream altered product source.",
+        "npm test from a clean clone, zero-install: tests 114 / pass 114 / fail 0, duration_ms 643.78, exit 0. node_modules absent before AND after. WS-10's 114/114 and WS-12's zero-install both reproduce exactly.",
+        "The 53-test delta reproduces: 61 tests at bd43f5f, 114 at HEAD.",
+        "evidence:a11y: 33 rows, 33 passed / 0 failed, min text 11.91 against threshold 4.5, min non-text 3.07 against threshold 3. Declared palette, not rendered pixels.",
+        "ac-coverage: evidence 11, partial 18, none 1, consistent true, problems empty. Read the test titles behind all 11 evidence criteria against unit-1-ac-traceability.md: NO evidence-claimed criterion is unsupported. AC-21, AC-25 and AC-29 carry explicit limitation strings; AC-01, the sole none, declines to borrow AC-24's evidence.",
+        "perf:artifact: 17 requests, 0 non-200, disk total equals wire total. Request count confirmed.",
+        "F-01 REPRODUCED LIVE: transition('constructor') returns true, state holds a function, STATE_VALUES.includes(state) is false, and the machine is then bricked (transition('start') returns false). WS-09's finding and WS-10's one-way-escape addition are both confirmed by execution; unreachability holds, since all 3 call sites pass literals.",
+        "Frame-rate independence confirmed: score 600/600/600 at 30/60/144 fps, spread 0 points, distancePx spread 4.48 px (0.012%).",
+        "Jump-apex spread confirmed: 134.44 / 141.67 / 145.88 px equals 8.51%, matching WS-11's stated 8.5%.",
+        "BOUNDARY CLEAN: zero delivery commits touched engineering/, .development-os/, DEVELOPMENT.md or development-os.config.json. README.md and docs/media/*.png were touched by exactly one commit, bf5ac18, authored by Product Operations - owner-directed and OUT OF SCOPE. BENCHMARK.md is not git-tracked at all.",
+        "D-1 BYTE TOTAL RECONCILED: measured 43842 B against the 42517 B in WS-08, WS-11 and WS-13. Cause: core.autocrlf true with no .gitattributes. Canonical git blobs sum to 42559 B over 18 files (index.html 2477, main.js 3903, palette.js 7049 - matching WS-08 exactly); minus src/package.json (42 B, never fetched) gives 42517. A fresh Windows checkout is CRLF, adding 1 byte per line, 1325 over the 17 fetched files. The src tree object is identical in both. WS-12 had ALREADY found and correctly diagnosed this same root cause. A disclosed environment property, not a contradiction.",
+        "D-2 WS-09 UNDERCOUNT: WS-09 states 10 inherited names accepted by transition(); the actual number is 12. tests/security/surface-scan.mjs hard-codes a 10-name probe omitting __defineSetter__ and __lookupSetter__. It understates rather than overstates and changes no conclusion. WS-10 had already corrected the methodology by deriving the alphabet from Object.getOwnPropertyNames(Object.prototype) at runtime.",
+        "D-3 WS-09 STALE SCAN FIGURE: zero matches on all 25 credential patterns no longer reproduces - pem_certificate 1 and putty_key_file 1 at HEAD, both self-matches on the scanner's own regex literals at tests/security/secret-scan.mjs:43-44. tests/security/ was UNTRACKED at d5b71dd (verified by listing that tree), so the tool could not then match itself. True when made, stale now. No credential material; sensitive paths ever tracked remains 0.",
+        "DECLARED GAPS ARE GENUINELY DECLARED: no browser tier (WS-10's cold Playwright run: ten minutes, zero output, exit 143), unset performance budget (both perf harnesses close by refusing to assert a threshold), rendered-pixel half of AC-16/AC-17. Each appears in the runbook, the operating overview and the machine-readable coverage matrix as an open gap. ci.yml states in its own header that it has NEVER been executed.",
+        "POST-COMMIT SEAL RE-CHECK: git rev-parse HEAD:src equals 0566d5d39599d0cdf374b5dee27d22afdb544c41 - UNCHANGED. The commit 979c6fb changed exactly one file; its parent is still d3560a81; git diff d3560a81..HEAD over src, tests, package.json and package-lock.json is empty.",
+        "DISPOSITION passed: every load-bearing claim reproduced. The three discrepancies are a line-ending artifact the delivery had already self-diagnosed, an undercount that understates a finding and was already corrected methodologically, and a stale-by-construction scan figure with no credential behind it. No material claim failed to reproduce; no gap was hidden rather than declared."
+      ],
+      "knownRisks": [
+        "R-01 src/ byte totals and any sha256 over src/ files are checkout-dependent on Windows (core.autocrlf true, no .gitattributes). A root .gitattributes would settle it; outside this workstream's write boundary.",
+        "R-02 F-01 remains LIVE and UNFIXED in sealed source, unreachable only because all three call sites pass literals. The first unit to route a string into transition() makes it real. True breadth is 12 inherited names, not the 10 recorded by WS-09.",
+        "R-03 tests/security/surface-scan.mjs hard-codes its probe list and will keep under-reporting F-01's breadth.",
+        "R-04 secret-scan.mjs will keep reporting 2 self-matches until it excludes its own source; a future reader must not read them as credential material.",
+        "R-05 Fourteen criteria stay partial and AC-01 stays none until a browser tier exists. This verification covers the unit tier only - NO rendered pixel was observed by this workstream."
+      ]
+    }
+  ],
+  "generatedAt": "2026-08-11T15:16:37.606Z"
+}

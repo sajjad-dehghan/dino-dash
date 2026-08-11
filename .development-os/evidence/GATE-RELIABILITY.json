@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "1.0.0",
+  "gateId": "GATE-RELIABILITY",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "relevantWorkstreamIds": [
+    "WS-11",
+    "WS-14"
+  ],
+  "workstreamRuns": [
+    {
+      "workstreamId": "WS-11",
+      "ownerRole": "ENG-11",
+      "status": "completed",
+      "verificationDisposition": "not_applicable",
+      "commands": [
+        "node --expose-gc tests/perf/simulation-cost.mjs",
+        "node tests/perf/artifact-weight.mjs 4291",
+        "node --test \"tests/unit/*.test.mjs\"",
+        "grep sweep over src/ for console/error-handler/PerformanceObserver/egress/storage call sites",
+        "one-line node script: BFS the ES module graph from src/main.js reporting module count and max dependency depth",
+        "one-line probe in a scratch dir: confirm node --test default discovery selects tests/unit/*.test.mjs and skips tests/perf/*.mjs"
+      ],
+      "evidence": [
+        "MACHINE: AMD Ryzen 7 4800H, 16 cores, 15.4 GiB, win32 10.0.28000 x64, Node v22.23.2 (V8 12.4.254.21-node.56). hrtime.bigint self-cost 0.089 us. Developer workstation, not a target-user device.",
+        "FRAME COST advanceRun(), 500000 samples at 60 Hz step after 50000 warm-up: mean 0.212 us per-frame-timed / 0.114 us untimed-batch; p50 0.200; p95 0.200; p99 0.400; p99.9 1.100; max 260.9 (single scheduler/GC outlier); min 0.100. Obstacles during sample: mean 2.04, max 4.",
+        "OBSTACLE SCALING linear: 0 obs 0.128 us/frame; 1 0.164; 2 0.185; 4 0.200; 8 0.224; 16 0.297; 32 0.468; 64 0.842; 128 1.612. Marginal 0.012 us per obstacle. Three O(n) passes, no nesting.",
+        "ALLOCATION 108000 frames = 30 simulated minutes, gc-settled heap: 4.336 to 4.337 MiB, drift 0.002 MiB. Obstacles bounded 0-3. Run-state own fields still 9. stepObstacles() filter rebuild is a steady garbage rate, not growth. NOTHING in the run loop grows unbounded.",
+        "SCORE TRACE grows unbounded BY DESIGN (AC-22): 200000 records = 11.12 MiB settled, about 58.3 B/record, one record per run end, dies with the JS realm.",
+        "FRAME-RATE INDEPENDENCE (ADR-002 section 5) VERIFIED: identical 60000 ms at 30/60/144 fps gives score 600/600/600, divergence 0 points (exact, not approximate). distancePx spread 4.48 px = 0.012%.",
+        "JUMP ARC IS NOT frame-rate independent: apex 134.44 px at 30 fps, 141.67 at 60, 145.88 at 144 = 11.44 px / 8.5% spread; airtime 666.67/666.67/673.61 ms. Semi-implicit Euler arithmetic, not a defect. Character 66 px, tallest cactus 82 px. Measured, not judged.",
+        "DELTA-TIME CLAMP CONFIRMED, PHYSICS.maxStepSeconds 0.05: engages at exactly 50 ms and holds flat. 60000 ms gap advances world 36.00 px instead of 43200; 3600000 ms gap also 36.00 px instead of 2592000 (72000x reduction). Residual 20.13 to 36.00 px is the speed ramp reaching the 720 px/s cap, not clamp leakage. Cactus at x=410 across thirty consecutive 5000 ms gaps steps 388.3/363.8/336.5/306.5/273.8/238.3/202.3/166.3/130.3/94.3/58.3/22.3 - stepped past one clamped step at a time, never skipped. Corroborates WS-05's independent 36 px.",
+        "RECOVERY (AC-23): nothing survives reload - score, run, position, obstacles and the whole trace are lost; page comes up idle as on a first visit. Zero call sites for localStorage/sessionStorage/indexedDB/document.cookie/caches/navigator.storage/serviceWorker/BroadcastChannel/history.pushState/URLSearchParams/fetch/sendBeacon (the only textual matches are two doc comments stating their absence). Nothing to corrupt, migrate, back up or restore.",
+        "OBSERVABILITY PRESENT: data-game-state on #dino-dash, frozen window.dinoDash accessor (getState/getScoreTrace/getBackgroundVariations/version), bubbling dino-dash:statechange CustomEvent with detail from/to - all emitted from the single transition() writer, all read-only from outside. ABSENT, zero call sites each: console.*, window.onerror, error/unhandledrejection listeners, reportError, try/catch anywhere, PerformanceObserver, performance.mark/measure, fetch/sendBeacon/XHR/WebSocket, any RUM or crash SDK. No logging, no error reporting, no metrics, no alerting. ENG-11 ADDED NONE.",
+        "ARTIFACT re-derived independently, not cited: 17 resources, 42517 B on disk AND 42517 B over 17 real HTTP GETs, 0 non-200, 0 cross-origin refs (only href=data:, favicon stub). WS-08's figures CONFIRMED EXACTLY. Disk equals wire proves no build/minify/compression. src/ total on disk 42559 B; the 42 B delta is src/package.json, never fetched. Module graph 15 modules, max dependency depth 3. Serial loopback GETs 237.7 ms - a measurement-loop property, NOT a page load time.",
+        "GATE-PERFORMANCE required:false, NOT ENGAGED. Declared evidence unproducible: budget results presuppose a budget that DEVREQ states is UNKNOWN and whose own verification clause requires rejecting any budget asserted before a device baseline; regression comparison presupposes a prior baseline and cacfcb0 has no predecessor - these numbers ARE the first baseline; load results presuppose concurrency and there is no server. Recorded gap, not a pass; stays open with WS-01 R-02.",
+        "GATE-RELIABILITY required:false, NOT ENGAGED. Service objectives presuppose a service (none: no server, no deployment, no uptime, no error budget, no incident surface); telemetry does not and must not exist (AC-24 forbids egress, AC-01 forbids console output, AC-25 forbids identity); recovery evidence exists only degenerately - nothing persists, reload equals a first visit. Recorded gap, not a pass. Neither gate waived, back-filled or reinterpreted into a pass.",
+        "UNIT TIER UNAFFECTED: node --test tests/unit/*.test.mjs gives 61 passed, 0 failed. Both harnesses are deliberately not named *.test.mjs; a scratch-dir probe confirmed node --test default discovery selects the unit file and skips both perf files. Neither harness asserts any threshold.",
+        "NO THRESHOLD INVENTED anywhere - not in the document, not in the harnesses, not as a test assertion, not implied by a comparison. Budget remains the product owner's to set; docs/engineering/WS-11-performance-review.md carries a lead section titled READ THIS FIRST - these are observations, not budgets, plus a section stating what the owner would need to choose one."
+      ],
+      "knownRisks": [
+        "PERF-R-01 jump apex varies with refresh rate: 134.44 px at 30 fps vs 145.88 px at 144 fps, 8.5% spread against a 66 px character and 82 px tallest cactus. Touches the contract's jump timing is fair phrase directly. Measured, not judged; no threshold asserted, no code changed.",
+        "PERF-R-02 the render half of the frame is unmeasured. canvas-renderer.js and hud.js need a real canvas and layout engine and cannot be driven in Node. Any total frame-time budget needs a browser-tier measurement that does not yet exist; the 0.212 us figure is simulation only and must not be read as the whole frame.",
+        "PERF-R-03 all figures come from one developer workstation, not a target-user device, and are likely faster than the low end of the real audience. Single-machine figures do not transfer; this is exactly why the contract requires a device baseline before a budget.",
+        "PERF-R-04 the score trace grows unbounded by design (about 58.3 B per run end). Harmless at Unit 1 scale; inherited by Unit 3 at the seam ADR-002 names.",
+        "PERF-R-05 GATE-PERFORMANCE and GATE-RELIABILITY are recorded gaps, not passes, and stay open into later units alongside WS-01 R-02, ISS-20260809-019 and DD-0008 GAP 2.",
+        "WS-05's background-tab scoring property (60 s hidden equals +600 points at zero risk) is referenced and its 36 px physics half corroborated, but is NOT re-accepted, re-scoped or reclassified by ENG-11; the owner's DEC-20260809-001 acceptance is untouched.",
+        "No package.json exists at this revision - WS-12 has not run - so both harnesses are invoked as bare node commands and are not yet reachable through any npm script. ENG-12 may wish to expose them, but they must never be added to the pass/fail test script."
+      ]
+    },
+    {
+      "workstreamId": "WS-14",
+      "ownerRole": "ENG-15",
+      "status": "completed",
+      "verificationDisposition": "passed",
+      "commands": [
+        "git clone --no-hardlinks into a temp dir outside both repos, then git checkout d3560a81",
+        "npm test gives exit 0",
+        "npm run evidence:a11y gives exit 0",
+        "node tests/tools/ac-coverage.mjs gives exit 0",
+        "npm run perf:artifact gives exit 0",
+        "npm run perf:simulation gives exit 0",
+        "node tests/security/sbom.mjs, secret-scan.mjs and surface-scan.mjs give exit 0, 0, 0",
+        "npm test at bd43f5f in a pre-WS-10 clone gives exit 0, 61 tests",
+        "git rev-parse <commit>:src for all 18 commits",
+        "git log --name-only 32d94b5..HEAD for the boundary inventory",
+        "node --input-type=module live F-01 execution against src/game/state-machine.js"
+      ],
+      "evidence": [
+        "SRC SEAL VERIFIED: all 16 commits from ea12453 (WS-03) to HEAD resolve src tree 0566d5d39599d0cdf374b5dee27d22afdb544c41; the 2 earlier commits have no src path. No workstream altered product source.",
+        "npm test from a clean clone, zero-install: tests 114 / pass 114 / fail 0, duration_ms 643.78, exit 0. node_modules absent before AND after. WS-10's 114/114 and WS-12's zero-install both reproduce exactly.",
+        "The 53-test delta reproduces: 61 tests at bd43f5f, 114 at HEAD.",
+        "evidence:a11y: 33 rows, 33 passed / 0 failed, min text 11.91 against threshold 4.5, min non-text 3.07 against threshold 3. Declared palette, not rendered pixels.",
+        "ac-coverage: evidence 11, partial 18, none 1, consistent true, problems empty. Read the test titles behind all 11 evidence criteria against unit-1-ac-traceability.md: NO evidence-claimed criterion is unsupported. AC-21, AC-25 and AC-29 carry explicit limitation strings; AC-01, the sole none, declines to borrow AC-24's evidence.",
+        "perf:artifact: 17 requests, 0 non-200, disk total equals wire total. Request count confirmed.",
+        "F-01 REPRODUCED LIVE: transition('constructor') returns true, state holds a function, STATE_VALUES.includes(state) is false, and the machine is then bricked (transition('start') returns false). WS-09's finding and WS-10's one-way-escape addition are both confirmed by execution; unreachability holds, since all 3 call sites pass literals.",
+        "Frame-rate independence confirmed: score 600/600/600 at 30/60/144 fps, spread 0 points, distancePx spread 4.48 px (0.012%).",
+        "Jump-apex spread confirmed: 134.44 / 141.67 / 145.88 px equals 8.51%, matching WS-11's stated 8.5%.",
+        "BOUNDARY CLEAN: zero delivery commits touched engineering/, .development-os/, DEVELOPMENT.md or development-os.config.json. README.md and docs/media/*.png were touched by exactly one commit, bf5ac18, authored by Product Operations - owner-directed and OUT OF SCOPE. BENCHMARK.md is not git-tracked at all.",
+        "D-1 BYTE TOTAL RECONCILED: measured 43842 B against the 42517 B in WS-08, WS-11 and WS-13. Cause: core.autocrlf true with no .gitattributes. Canonical git blobs sum to 42559 B over 18 files (index.html 2477, main.js 3903, palette.js 7049 - matching WS-08 exactly); minus src/package.json (42 B, never fetched) gives 42517. A fresh Windows checkout is CRLF, adding 1 byte per line, 1325 over the 17 fetched files. The src tree object is identical in both. WS-12 had ALREADY found and correctly diagnosed this same root cause. A disclosed environment property, not a contradiction.",
+        "D-2 WS-09 UNDERCOUNT: WS-09 states 10 inherited names accepted by transition(); the actual number is 12. tests/security/surface-scan.mjs hard-codes a 10-name probe omitting __defineSetter__ and __lookupSetter__. It understates rather than overstates and changes no conclusion. WS-10 had already corrected the methodology by deriving the alphabet from Object.getOwnPropertyNames(Object.prototype) at runtime.",
+        "D-3 WS-09 STALE SCAN FIGURE: zero matches on all 25 credential patterns no longer reproduces - pem_certificate 1 and putty_key_file 1 at HEAD, both self-matches on the scanner's own regex literals at tests/security/secret-scan.mjs:43-44. tests/security/ was UNTRACKED at d5b71dd (verified by listing that tree), so the tool could not then match itself. True when made, stale now. No credential material; sensitive paths ever tracked remains 0.",
+        "DECLARED GAPS ARE GENUINELY DECLARED: no browser tier (WS-10's cold Playwright run: ten minutes, zero output, exit 143), unset performance budget (both perf harnesses close by refusing to assert a threshold), rendered-pixel half of AC-16/AC-17. Each appears in the runbook, the operating overview and the machine-readable coverage matrix as an open gap. ci.yml states in its own header that it has NEVER been executed.",
+        "POST-COMMIT SEAL RE-CHECK: git rev-parse HEAD:src equals 0566d5d39599d0cdf374b5dee27d22afdb544c41 - UNCHANGED. The commit 979c6fb changed exactly one file; its parent is still d3560a81; git diff d3560a81..HEAD over src, tests, package.json and package-lock.json is empty.",
+        "DISPOSITION passed: every load-bearing claim reproduced. The three discrepancies are a line-ending artifact the delivery had already self-diagnosed, an undercount that understates a finding and was already corrected methodologically, and a stale-by-construction scan figure with no credential behind it. No material claim failed to reproduce; no gap was hidden rather than declared."
+      ],
+      "knownRisks": [
+        "R-01 src/ byte totals and any sha256 over src/ files are checkout-dependent on Windows (core.autocrlf true, no .gitattributes). A root .gitattributes would settle it; outside this workstream's write boundary.",
+        "R-02 F-01 remains LIVE and UNFIXED in sealed source, unreachable only because all three call sites pass literals. The first unit to route a string into transition() makes it real. True breadth is 12 inherited names, not the 10 recorded by WS-09.",
+        "R-03 tests/security/surface-scan.mjs hard-codes its probe list and will keep under-reporting F-01's breadth.",
+        "R-04 secret-scan.mjs will keep reporting 2 self-matches until it excludes its own source; a future reader must not read them as credential material.",
+        "R-05 Fourteen criteria stay partial and AC-01 stays none until a browser tier exists. This verification covers the unit tier only - NO rendered pixel was observed by this workstream."
+      ]
+    }
+  ],
+  "generatedAt": "2026-08-11T15:16:37.606Z"
+}

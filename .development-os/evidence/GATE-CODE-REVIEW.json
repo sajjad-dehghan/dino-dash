@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "1.0.0",
+  "gateId": "GATE-CODE-REVIEW",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "relevantWorkstreamIds": [
+    "WS-01",
+    "WS-14"
+  ],
+  "workstreamRuns": [
+    {
+      "workstreamId": "WS-01",
+      "ownerRole": "ENG-01",
+      "status": "completed",
+      "verificationDisposition": "not_applicable",
+      "commands": [
+        "git -C \"D:/os-test/dino-dash-app\" log --oneline -5",
+        "git -C \"D:/os-test/dino-dash-app\" status --short",
+        "git add docs/engineering/WS-01-coordination.md",
+        "git diff --cached --name-only",
+        "git -c user.name=\"ENG-01 Engineering Coordination\" -c user.email=\"actor-eng-01@dino-dash.local\" commit -q -m <message naming WS-01 and DEVREQ-EVT-20260809-001>",
+        "git log -1 --format=%H",
+        "git show --stat --format=\"%h %s\" HEAD",
+        "git branch --show-current",
+        "git diff-tree --no-commit-id --name-only -r HEAD",
+        "git -C \"D:/os-test/dino-dash\" status --short"
+      ],
+      "evidence": [
+        "D:/os-test/dino-dash-app/docs/engineering/WS-01-coordination.md at revision 2098741e9e25d19dc1251d3239b6a72436ed6ca5 - the full coordination register: execution sequence for WS-02..WS-14, dependency register D-01..D-13, traceability of AC-01..AC-30, blockers B-01..B-07 and risks R-01..R-04, and the statement of work not done",
+        "Commit 2098741e9e25d19dc1251d3239b6a72436ed6ca5 on branch codex/evt-20260809-001, parent 32d94b58f0b3408adc2d8c1470c6c33abd1bdb20; git show --stat reports exactly 1 file changed, 238 insertions, 0 deletions",
+        "git diff-tree --no-commit-id --name-only -r HEAD returns the single path docs/engineering/WS-01-coordination.md; filtering that inventory against engineering/, .development-os/, DEVELOPMENT.md, development-os.config.json, .git, node_modules, .env, secrets and production-data returns no match (AC-28 pre-check for this workstream only)",
+        "git -C D:/os-test/dino-dash status --short after the commit returns the same three entries recorded in the session-start snapshot (M .product-ops/runtime/approvals.json, ?? .product-ops/runtime/autopilot/requests/, ?? .product-ops/runtime/development/), confirming WS-01 wrote nothing in the product workspace",
+        "Sources read to build the register, all unmodified: .development-os/inbox/DEVREQ-EVT-20260809-001.json, .development-os/plans/ENGPLAN-EVT-20260809-001.json, .development-os/receipts/SYNC-IN-EVT-20260809-001.json, engineering/quality/gates.json, engineering/governance/roles.json, engineering/governance/charter.md, engineering/architecture/system-context.md, engineering/standards/*.md, engineering/taskboard/workstreams.csv",
+        "Required-gate coverage cross-check reproducible from engineering/quality/gates.json: the seven gates with required:true (ARCHITECTURE, CODE-REVIEW, AUTOMATED-TESTS, SECURITY, SUPPLY-CHAIN, DOCUMENTATION, INDEPENDENT-VERIFICATION) each map to a workstream section 1 marks as having real work"
+      ],
+      "knownRisks": [
+        "The commit message carries a stray '@' character on its first and last line, an artifact of PowerShell here-string syntax passed to a POSIX shell. The message body still names WS-01 and DEVREQ-EVT-20260809-001 as required, and the tree and parent are correct. It was not corrected because the WS-01 instruction forbids amending; disclosed rather than silently rewritten.",
+        "ENG-01 must not certify its own coordination claims (engineering/governance/roles.json ENG-01 mustNot). Nothing in this register is verified: the sequence, the dependency edges ENG-01 added beyond the plan's own, and the AC-to-workstream mapping are all producer assertions awaiting WS-14.",
+        "The traceability mapping is an interpretation made for sequencing. It assigns ownership of acceptance criteria; it does not restate, narrow or extend them, and where it and the contract text diverge the contract governs.",
+        "AC-28 and AC-30 are only mutually consistent under AC-28's own 'by application code' qualifier, since AC-30 requires evidence under .development-os/evidence/ while AC-28 prohibits files there. B-02 records that reading. ENG-01 has no authority to settle it; if ENG-15 reads AC-28 as an absolute path prohibition the conflict is a contract defect for Product Operations, not a workstream decision.",
+        "The ordering constraint that WS-12 must land its runnable test command before WS-03 and WS-10 is an ENG-01 addition; the plan's declared edges do not express it (WS-03 depends only on WS-02). If a later workstream follows the plan's edges literally rather than this register, AC-30's clean-checkout reproducibility is at risk.",
+        "Five workstreams are directed to record not_applicable (WS-04, WS-05, WS-06, WS-07, WS-08) plus WS-11 with a carried limitation. That judgement rests on the contract's Unit 1 non-goals. If any later unit scope is read into this delivery, those dispositions become wrong. WS-09 and WS-10 declare dependencies on those runs, so an omitted record blocks two required-gate workstreams.",
+        "The contract's performance NFR is explicitly unquantified and no acceptance criterion asserts a frame-rate or input-latency threshold. WS-01 leaves it open and no workstream in this plan can close it; jump-timing fairness remains unmeasured for Unit 1.",
+        "AC-18's judgement half sits with the human product owner under final_user_visible_acceptance and is flagged conditional by ISS-20260809-028. No engineering workstream, including WS-14, can close it, so the delivery cannot reach a fully dispositioned state through engineering alone.",
+        "AC-21's stated verification requires changing the operating-system clock mid-run and AC-01 requires both a Chromium-based and a Gecko-based browser. Neither was attempted at WS-01 and neither is confirmed executable in this environment; both are registered as blockers rather than assumed available.",
+        "The working tree at the point WS-01 ran already carried unrelated intake bookkeeping (modified engineering/taskboard/workstreams.csv and three untracked .development-os/ files) created before this workstream. They are excluded from WS-01's changed-component list, but any AC-28 inventory built from git status rather than from the branch commits will misattribute them.",
+        "No pre-existing docs/ directory or engineering documentation convention existed in this repository to conform to; the path docs/engineering/WS-01-coordination.md was set by the WS-01 assignment, not derived from an established layout."
+      ]
+    },
+    {
+      "workstreamId": "WS-14",
+      "ownerRole": "ENG-15",
+      "status": "completed",
+      "verificationDisposition": "passed",
+      "commands": [
+        "git clone --no-hardlinks into a temp dir outside both repos, then git checkout d3560a81",
+        "npm test gives exit 0",
+        "npm run evidence:a11y gives exit 0",
+        "node tests/tools/ac-coverage.mjs gives exit 0",
+        "npm run perf:artifact gives exit 0",
+        "npm run perf:simulation gives exit 0",
+        "node tests/security/sbom.mjs, secret-scan.mjs and surface-scan.mjs give exit 0, 0, 0",
+        "npm test at bd43f5f in a pre-WS-10 clone gives exit 0, 61 tests",
+        "git rev-parse <commit>:src for all 18 commits",
+        "git log --name-only 32d94b5..HEAD for the boundary inventory",
+        "node --input-type=module live F-01 execution against src/game/state-machine.js"
+      ],
+      "evidence": [
+        "SRC SEAL VERIFIED: all 16 commits from ea12453 (WS-03) to HEAD resolve src tree 0566d5d39599d0cdf374b5dee27d22afdb544c41; the 2 earlier commits have no src path. No workstream altered product source.",
+        "npm test from a clean clone, zero-install: tests 114 / pass 114 / fail 0, duration_ms 643.78, exit 0. node_modules absent before AND after. WS-10's 114/114 and WS-12's zero-install both reproduce exactly.",
+        "The 53-test delta reproduces: 61 tests at bd43f5f, 114 at HEAD.",
+        "evidence:a11y: 33 rows, 33 passed / 0 failed, min text 11.91 against threshold 4.5, min non-text 3.07 against threshold 3. Declared palette, not rendered pixels.",
+        "ac-coverage: evidence 11, partial 18, none 1, consistent true, problems empty. Read the test titles behind all 11 evidence criteria against unit-1-ac-traceability.md: NO evidence-claimed criterion is unsupported. AC-21, AC-25 and AC-29 carry explicit limitation strings; AC-01, the sole none, declines to borrow AC-24's evidence.",
+        "perf:artifact: 17 requests, 0 non-200, disk total equals wire total. Request count confirmed.",
+        "F-01 REPRODUCED LIVE: transition('constructor') returns true, state holds a function, STATE_VALUES.includes(state) is false, and the machine is then bricked (transition('start') returns false). WS-09's finding and WS-10's one-way-escape addition are both confirmed by execution; unreachability holds, since all 3 call sites pass literals.",
+        "Frame-rate independence confirmed: score 600/600/600 at 30/60/144 fps, spread 0 points, distancePx spread 4.48 px (0.012%).",
+        "Jump-apex spread confirmed: 134.44 / 141.67 / 145.88 px equals 8.51%, matching WS-11's stated 8.5%.",
+        "BOUNDARY CLEAN: zero delivery commits touched engineering/, .development-os/, DEVELOPMENT.md or development-os.config.json. README.md and docs/media/*.png were touched by exactly one commit, bf5ac18, authored by Product Operations - owner-directed and OUT OF SCOPE. BENCHMARK.md is not git-tracked at all.",
+        "D-1 BYTE TOTAL RECONCILED: measured 43842 B against the 42517 B in WS-08, WS-11 and WS-13. Cause: core.autocrlf true with no .gitattributes. Canonical git blobs sum to 42559 B over 18 files (index.html 2477, main.js 3903, palette.js 7049 - matching WS-08 exactly); minus src/package.json (42 B, never fetched) gives 42517. A fresh Windows checkout is CRLF, adding 1 byte per line, 1325 over the 17 fetched files. The src tree object is identical in both. WS-12 had ALREADY found and correctly diagnosed this same root cause. A disclosed environment property, not a contradiction.",
+        "D-2 WS-09 UNDERCOUNT: WS-09 states 10 inherited names accepted by transition(); the actual number is 12. tests/security/surface-scan.mjs hard-codes a 10-name probe omitting __defineSetter__ and __lookupSetter__. It understates rather than overstates and changes no conclusion. WS-10 had already corrected the methodology by deriving the alphabet from Object.getOwnPropertyNames(Object.prototype) at runtime.",
+        "D-3 WS-09 STALE SCAN FIGURE: zero matches on all 25 credential patterns no longer reproduces - pem_certificate 1 and putty_key_file 1 at HEAD, both self-matches on the scanner's own regex literals at tests/security/secret-scan.mjs:43-44. tests/security/ was UNTRACKED at d5b71dd (verified by listing that tree), so the tool could not then match itself. True when made, stale now. No credential material; sensitive paths ever tracked remains 0.",
+        "DECLARED GAPS ARE GENUINELY DECLARED: no browser tier (WS-10's cold Playwright run: ten minutes, zero output, exit 143), unset performance budget (both perf harnesses close by refusing to assert a threshold), rendered-pixel half of AC-16/AC-17. Each appears in the runbook, the operating overview and the machine-readable coverage matrix as an open gap. ci.yml states in its own header that it has NEVER been executed.",
+        "POST-COMMIT SEAL RE-CHECK: git rev-parse HEAD:src equals 0566d5d39599d0cdf374b5dee27d22afdb544c41 - UNCHANGED. The commit 979c6fb changed exactly one file; its parent is still d3560a81; git diff d3560a81..HEAD over src, tests, package.json and package-lock.json is empty.",
+        "DISPOSITION passed: every load-bearing claim reproduced. The three discrepancies are a line-ending artifact the delivery had already self-diagnosed, an undercount that understates a finding and was already corrected methodologically, and a stale-by-construction scan figure with no credential behind it. No material claim failed to reproduce; no gap was hidden rather than declared."
+      ],
+      "knownRisks": [
+        "R-01 src/ byte totals and any sha256 over src/ files are checkout-dependent on Windows (core.autocrlf true, no .gitattributes). A root .gitattributes would settle it; outside this workstream's write boundary.",
+        "R-02 F-01 remains LIVE and UNFIXED in sealed source, unreachable only because all three call sites pass literals. The first unit to route a string into transition() makes it real. True breadth is 12 inherited names, not the 10 recorded by WS-09.",
+        "R-03 tests/security/surface-scan.mjs hard-codes its probe list and will keep under-reporting F-01's breadth.",
+        "R-04 secret-scan.mjs will keep reporting 2 self-matches until it excludes its own source; a future reader must not read them as credential material.",
+        "R-05 Fourteen criteria stay partial and AC-01 stays none until a browser tier exists. This verification covers the unit tier only - NO rendered pixel was observed by this workstream."
+      ]
+    }
+  ],
+  "generatedAt": "2026-08-11T15:16:37.606Z"
+}

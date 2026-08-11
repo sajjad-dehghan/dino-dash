@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "workstreamId": "WS-13",
+  "ownerRole": "ENG-14",
+  "producerActorId": "actor-eng-14",
+  "status": "completed",
+  "verificationDisposition": "not_applicable",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "changedComponents": [
+    "docs/score-trace-contract.md (added) - AC-29 deliverable, Unit-3-facing field contract",
+    "docs/runbook.md (added) - commands, manual AC-12/AC-14 procedure, 11 carried gaps",
+    "docs/operating-overview.md (added) - states, DOM-free core, palette rule, deliberate absences",
+    "docs/README.md (added) - docs index; points a Unit 3 author at the contract in row 1",
+    "docs/engineering/WS-13-documentation.md (added) - workstream record and gate disposition",
+    "src/ unchanged: git rev-parse HEAD:src equals 0566d5d39599d0cdf374b5dee27d22afdb544c41, byte-identical to the WS-03 seal",
+    "root README.md and BENCHMARK.md not touched (already modified in the working tree by another process; left unstaged)"
+  ],
+  "commands": [
+    "npm test gives tests 114 / pass 114 / fail 0, duration_ms 338.0159, exit 0 (re-run after docs: 114/114, exit 0)",
+    "npm run evidence:a11y gives 3 variations, 11 pairs, 33 rows, 33 pass / 0 fail, min text 11.91, min non-text 3.07, exit 0",
+    "node tests/tools/static-server.mjs 4173 serving src/; GET / 200 2477 B; GET /main.js 200 3903 B",
+    "node tests/tools/ac-coverage.mjs gives evidence 11, partial 18, none 1; ac-coverage.json 24722 B, sha256 bf5ca2cd52f7bda398a93c4b576ba88eab11f69481c4a5876d614194549ae7fe, exit 0",
+    "npm run perf:artifact gives 17 requests, 0 non-200, disk 42517 equals wire 42517, exit 0",
+    "npm run perf:simulation (node --expose-gc tests/perf/simulation-cost.mjs) gives the full report, asserts nothing, exit 0",
+    "git add (5 docs files only); git diff --check --cached clean; git commit gives d3560a8, 5 files, 1005 insertions",
+    "Environment: Node v22.23.2, npm 10.9.8, Windows 11 Pro 10.0.28000, Git Bash, no node_modules, no install step"
+  ],
+  "evidence": [
+    "AC-29 prediction (written to a scratch file OUTSIDE the repo BEFORE opening src/trace/score-trace.js or any run-loop module, from ADR-003 and docs/score-trace-contract.md alone): score = number/integer/points/>=0; endedAt = string, ISO-8601 UTC, literal Z, YYYY-MM-DDTHH:MM:SS.mmmZ; sessionLengthMs = number/integer/milliseconds/monotonic/>=0; keys exactly endedAt, score, sessionLengthMs; no id, no schema version, no device marker, no nesting",
+    "AC-29 actual records, from three real seeded runs over the delivered src/game/* and src/trace/score-trace.js at the sealed tree: score 35, endedAt 2026-08-11T14:04:36.171Z, sessionLengthMs 3600 (and .172Z, .173Z)",
+    "AC-29 comparison: ZERO discrepancies. keys equal endedAt, score, sessionLengthMs; score number integer true; endedAt string matching the UTC Z pattern and Date.parse ok; sessionLengthMs number integer true; prototype is Object.prototype; copy-on-read confirmed (two list() calls returned a different array AND different record objects); 3 records after 3 runs",
+    "AC-29 method disclosure: module API (appendRunEnd/list/size/RECORD_FIELDS) discovered by runtime introspection, not by reading the module; src/main.js accessor names confirmed by targeted grep AFTER the prediction was fixed on disk; window.dinoDash.getScoreTrace() itself NOT exercised - no browser tier exists",
+    "AC-29 discoverability: docs/README.md row 1 of table 1 points to docs/score-trace-contract.md, repeated in a call-out; the document opens by stating it can be read alone without opening src/",
+    "Standing drift guard: tests/unit/trace-contract.test.mjs (7 tests, under npm test) reads ADR-003 and asserts the delivered module matches the documented field set, types, units and UTC Z convention",
+    "GATE-DOCUMENTATION (required true) DISCHARGED. Updated operating documentation maps to docs/operating-overview.md plus docs/score-trace-contract.md plus docs/README.md. Runbook or migration notes maps to docs/runbook.md (six commands each executed with real output, manual AC-12/AC-14 procedure, clean-checkout recipe, CI status); migration notes not_applicable - nothing persists, so nothing to migrate. Disposition and evidence table also recorded in docs/engineering/WS-13-documentation.md",
+    "engineering/standards/ contains eight standards and none covers technical_documentation - no domain standard exists for this workstream to discharge"
+  ],
+  "knownRisks": [
+    "No browser tier. WS-10's cold Playwright acquisition: ten minutes, zero output, zero bytes, exit 143. Fourteen criteria partial or none for this one reason. Carried in runbook R-06 and overview section 9.1",
+    "Rendered-pixel half of AC-16/AC-17 unmeasured - evidence:a11y measures the declared palette only. A failing row proves the palette cannot pass; a passing row does not close the criterion. runbook R-01",
+    "Performance budget UNSET and must not be invented; GATE-PERFORMANCE and GATE-RELIABILITY are recorded gaps, not passes. PERF-R-01 (8.5% jump-apex spread across 30-144 fps) documented as measurement, explicitly not judged. runbook R-05",
+    "WS-09 F-01 guarded, not fixed - prototype-chain lookup in transition(); unreachable at this revision, characterised and containment-tested; src/ is sealed. Characterisation tests are written to FAIL when it is fixed. runbook R-08",
+    "endedAt Z interpretation risk live against AC-19's explicit UTC offset; a verifier requiring numeric plus-minus HH:MM would find Z insufficient. score-trace-contract section 2, runbook R-09",
+    "AC-30 names AC-12 and AC-14 and no command produces evidence for either; AC-14 has no substitute at all. Procedure stated in runbook section 2. runbook R-07",
+    "Score trace grows unboundedly by design (about 58.3 B per record, one per run end); inherited by Unit 3 at the seam",
+    "Hidden-tab time-derived score accrual (+600 points per 60 s hidden) documented and kept DISTINCT from DEC-20260809-001's forgery acceptance; not re-accepted here",
+    "CI workflow has never been executed; engines floor >=20.11.0 declared but only v22.23.2 exercised. runbook R-03",
+    "CRLF and no .gitattributes makes byte totals and src/ digests checkout-dependent on Windows; raised, not fixed (outside boundary). runbook R-02",
+    "Evidence deposition under .development-os/evidence/ not performed - outside this write boundary. runbook R-11",
+    "aria-hidden canvas: the play field is not conveyed to assistive technology - recorded as a known limitation, not a satisfied requirement"
+  ],
+  "completedAt": "2026-08-11T14:12:18Z"
+}

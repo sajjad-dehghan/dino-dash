@@ -1,0 +1,546 @@
+{
+  "schemaVersion": "1.0.0",
+  "resultId": "ENGRESULT-EVT-20260809-001",
+  "requestId": "DEVREQ-EVT-20260809-001",
+  "productTaskId": "DD-0009",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "planDigest": "5ce1324120c0f5fb96d957e6de6271fa1979e1c4f25568cbf4a7e7573b5442e2",
+  "sourceDigest": "6586f10d8f0738c352008388ffb207da437c577a2579456a63807316bd43a926",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "status": "implementation_complete",
+  "implementationReferences": [
+    "branch:codex/evt-20260809-001",
+    "content-digest:661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9"
+  ],
+  "changedComponents": [
+    ".github/workflows/ci.yml",
+    "BENCHMARK.md",
+    "README.md",
+    "development-os.config.json",
+    "docs/README.md",
+    "docs/architecture/decisions/ADR-001-browser-target-and-runtime-baseline.md",
+    "docs/architecture/decisions/ADR-002-unit-1-rendering-state-model-and-module-layout.md",
+    "docs/architecture/decisions/ADR-003-score-trace-field-contract.md",
+    "docs/architecture/decisions/ADR-004-observability-affordances-state-signal-and-background-enumeration.md",
+    "docs/architecture/decisions/ADR-005-build-and-test-toolchain.md",
+    "docs/architecture/unit-1-ac-traceability.md",
+    "docs/architecture/unit-1-architecture-notes.md",
+    "docs/architecture/unit-1-system-impact.md",
+    "docs/engineering/WS-01-coordination.md",
+    "docs/engineering/WS-03-implementation.md",
+    "docs/engineering/WS-04-backend-review.md",
+    "docs/engineering/WS-05-client-review.md",
+    "docs/engineering/WS-06-storage-review.md",
+    "docs/engineering/WS-07-data-review.md",
+    "docs/engineering/WS-08-platform-review.md",
+    "docs/engineering/WS-09-security-review.md",
+    "docs/engineering/WS-10-quality-review.md",
+    "docs/engineering/WS-11-performance-review.md",
+    "docs/engineering/WS-12-delivery-review.md",
+    "docs/engineering/WS-13-documentation.md",
+    "docs/engineering/WS-14-independent-verification.md",
+    "docs/media/collision.png",
+    "docs/media/dawn.png",
+    "docs/media/dusk.png",
+    "docs/media/noon.png",
+    "docs/operating-overview.md",
+    "docs/runbook.md",
+    "docs/score-trace-contract.md",
+    "package-lock.json",
+    "package.json",
+    "src/engine/clock.js",
+    "src/engine/loop.js",
+    "src/game/collision.js",
+    "src/game/obstacles.js",
+    "src/game/physics.js",
+    "src/game/run-state.js",
+    "src/game/score.js",
+    "src/game/simulation.js",
+    "src/game/state-machine.js",
+    "src/index.html",
+    "src/input/keyboard.js",
+    "src/main.js",
+    "src/package.json",
+    "src/render/canvas-renderer.js",
+    "src/render/hud.js",
+    "src/render/palette.js",
+    "src/styles/game.css",
+    "src/trace/score-trace.js",
+    "tests/.gitignore",
+    "tests/.results/.gitignore",
+    "tests/a11y/contrast-evidence.mjs",
+    "tests/perf/artifact-weight.mjs",
+    "tests/perf/simulation-cost.mjs",
+    "tests/security/sbom.mjs",
+    "tests/security/secret-scan.mjs",
+    "tests/security/surface-scan.mjs",
+    "tests/tools/ac-coverage.mjs",
+    "tests/tools/static-server.mjs",
+    "tests/unit/absent-surface.test.mjs",
+    "tests/unit/collision-and-obstacles.test.mjs",
+    "tests/unit/frame-gap-accrual.test.mjs",
+    "tests/unit/keyboard-journey.test.mjs",
+    "tests/unit/palette.test.mjs",
+    "tests/unit/physics-and-score.test.mjs",
+    "tests/unit/run-loop.test.mjs",
+    "tests/unit/run-state.test.mjs",
+    "tests/unit/score-format-extremes.test.mjs",
+    "tests/unit/score-trace.test.mjs",
+    "tests/unit/source-hygiene.test.mjs",
+    "tests/unit/state-machine-prototype.test.mjs",
+    "tests/unit/state-machine.test.mjs",
+    "tests/unit/trace-contract.test.mjs"
+  ],
+  "workstreamRuns": [
+    {
+      "workstreamId": "WS-01",
+      "runDigest": "7a7cb42222d5af5cb7e0caed6d5505fcb7c9c0e100fc23f02637f57031198fce"
+    },
+    {
+      "workstreamId": "WS-02",
+      "runDigest": "0de221d5387d0583fe0f5f5d59b5a0d521ec7918e3b604ac783676df72715ac5"
+    },
+    {
+      "workstreamId": "WS-03",
+      "runDigest": "21bc7ee95f5af0f148e0d4dfe0405693d264f3c719e2ebca2d879365f41163cf"
+    },
+    {
+      "workstreamId": "WS-04",
+      "runDigest": "b2dcec31c6b4679e87ece06e36ceb75ea16ab26c2b33a578ec6584d9db395d7a"
+    },
+    {
+      "workstreamId": "WS-05",
+      "runDigest": "e4be8978fe758f713b018c6f7e8d0d2d7a96f246710a964a7c9c6c63f2690f01"
+    },
+    {
+      "workstreamId": "WS-06",
+      "runDigest": "a1a84a09b8df6750ee904e0c65df8ebc8fbab32240c78c9161462ab1a031de01"
+    },
+    {
+      "workstreamId": "WS-07",
+      "runDigest": "6386b01252ec14d83adc56b45b9d29e7b6005f8b91d257560864f7a350de6f42"
+    },
+    {
+      "workstreamId": "WS-08",
+      "runDigest": "9f1ba3bac5cfc8b8d9f93826724eebba4c48f3588be533cf635f6653319f018b"
+    },
+    {
+      "workstreamId": "WS-09",
+      "runDigest": "520de28176201fa949a990ab9d55f659bff0ec574b914b9319e867150ad309ff"
+    },
+    {
+      "workstreamId": "WS-10",
+      "runDigest": "b456b693958385de55a9877c54dc8962e650295506dc6a4872db0805143f7341"
+    },
+    {
+      "workstreamId": "WS-11",
+      "runDigest": "3d7d58f819bb0cbf8e99c1239685047dd0467936f721ec2dbc65df28b54ea6c9"
+    },
+    {
+      "workstreamId": "WS-12",
+      "runDigest": "5a35620db2dfbe154750b7b8ee4f4e735fccdb7d1595c73f2b4118c104ee300e"
+    },
+    {
+      "workstreamId": "WS-13",
+      "runDigest": "049592f2b7124e20d10dd031648a9e994e3f7bb1e65084a53b1d1b49209ea51a"
+    },
+    {
+      "workstreamId": "WS-14",
+      "runDigest": "7969cbef26fef2ed956ddee343227f2f2b610c9fe9cf932317f89d2311b6dbe0"
+    }
+  ],
+  "gateResults": [
+    {
+      "gateId": "GATE-ARCHITECTURE",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-ARCHITECTURE.json"
+      ]
+    },
+    {
+      "gateId": "GATE-CODE-REVIEW",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-CODE-REVIEW.json"
+      ]
+    },
+    {
+      "gateId": "GATE-AUTOMATED-TESTS",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-AUTOMATED-TESTS.json"
+      ]
+    },
+    {
+      "gateId": "GATE-SECURITY",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-SECURITY.json"
+      ]
+    },
+    {
+      "gateId": "GATE-SUPPLY-CHAIN",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-SUPPLY-CHAIN.json"
+      ]
+    },
+    {
+      "gateId": "GATE-DATABASE",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-DATABASE.json"
+      ]
+    },
+    {
+      "gateId": "GATE-API-COMPATIBILITY",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-API-COMPATIBILITY.json"
+      ]
+    },
+    {
+      "gateId": "GATE-INFRA-NETWORK",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-INFRA-NETWORK.json"
+      ]
+    },
+    {
+      "gateId": "GATE-PRIVACY-COMPLIANCE",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-PRIVACY-COMPLIANCE.json"
+      ]
+    },
+    {
+      "gateId": "GATE-ACCESSIBILITY",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-ACCESSIBILITY.json"
+      ]
+    },
+    {
+      "gateId": "GATE-PERFORMANCE",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-PERFORMANCE.json"
+      ]
+    },
+    {
+      "gateId": "GATE-RELIABILITY",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-RELIABILITY.json"
+      ]
+    },
+    {
+      "gateId": "GATE-DOCUMENTATION",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-DOCUMENTATION.json"
+      ]
+    },
+    {
+      "gateId": "GATE-INDEPENDENT-VERIFICATION",
+      "status": "passed",
+      "evidenceReferences": [
+        ".development-os/evidence/GATE-INDEPENDENT-VERIFICATION.json"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "path": ".development-os/evidence/GATE-ARCHITECTURE.json",
+      "kind": "architecture",
+      "sha256": "555c157cd082b4b83f9e31b8b511f7e55ecbf8f414f6b71930821faf54f57f06",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-02",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-CODE-REVIEW.json",
+      "kind": "review",
+      "sha256": "66f0145019314a0cb8d0e7a7408c1cabaef973ce942050edfd3eb7156efa295c",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-01",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-AUTOMATED-TESTS.json",
+      "kind": "test",
+      "sha256": "a34056446c93838dc8c41e6264f6d7bdd525a0a19b0707e669faa65e5f8ff76c",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-10",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-SECURITY.json",
+      "kind": "security",
+      "sha256": "7b1bdc4c24530003f5e8e688027313e55158fc7973b65075c7a46ebf1c7c81d9",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-09",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-SUPPLY-CHAIN.json",
+      "kind": "security",
+      "sha256": "684e954460046aa7267c07da6bf30505de21cb7510cc5781d63df1617ddb33ee",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-09",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-DATABASE.json",
+      "kind": "database",
+      "sha256": "89c86d36b4adba5491dd6f63812ed14c9c9349fad80fcb54451c103b66dcef02",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-06",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-API-COMPATIBILITY.json",
+      "kind": "api",
+      "sha256": "4e43e97c25c22f4ad804464a0538e7be4f8141460a8f12825738ba8c38e91983",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-04",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-INFRA-NETWORK.json",
+      "kind": "infrastructure",
+      "sha256": "e4cd3e824b6bcc81b2f624cac281131add1e2839019d0c9624f1c7503eb12602",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-08",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-PRIVACY-COMPLIANCE.json",
+      "kind": "privacy",
+      "sha256": "be06158a3a42c2832cad005cd0c5ca2e88ac9631fb462888ef774b772b3653d5",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-09",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-ACCESSIBILITY.json",
+      "kind": "accessibility",
+      "sha256": "9e4795abceca558be5a96a3576ec2a256f98d9083c8a3f69ddc3d3f5272b851b",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-03",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-PERFORMANCE.json",
+      "kind": "performance",
+      "sha256": "6d6dc71c18250da8ef811d874d0f74a73ae198ce31be175d895ed27f2b93853a",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-11",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-RELIABILITY.json",
+      "kind": "reliability",
+      "sha256": "92668172e5efd6fb949eca604f9669f29e536eaf0ad558e4d74f0490f352c8f8",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-11",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-DOCUMENTATION.json",
+      "kind": "documentation",
+      "sha256": "1327bd50d4af9f333838682cdd8e3fc3c87d27e8a12962ae6f8d2be27bbc2b14",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-13",
+        "WS-14"
+      ]
+    },
+    {
+      "path": ".development-os/evidence/GATE-INDEPENDENT-VERIFICATION.json",
+      "kind": "verification",
+      "sha256": "1afcf8b216249aa4a8fef334f3879a12eedba5d1b766ed73eefe2bcb3230dea5",
+      "sourceRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+      "relevantWorkstreamIds": [
+        "WS-14"
+      ]
+    }
+  ],
+  "deploymentReferences": [],
+  "knownRisks": [
+    "The commit message carries a stray '@' character on its first and last line, an artifact of PowerShell here-string syntax passed to a POSIX shell. The message body still names WS-01 and DEVREQ-EVT-20260809-001 as required, and the tree and parent are correct. It was not corrected because the WS-01 instruction forbids amending; disclosed rather than silently rewritten.",
+    "ENG-01 must not certify its own coordination claims (engineering/governance/roles.json ENG-01 mustNot). Nothing in this register is verified: the sequence, the dependency edges ENG-01 added beyond the plan's own, and the AC-to-workstream mapping are all producer assertions awaiting WS-14.",
+    "The traceability mapping is an interpretation made for sequencing. It assigns ownership of acceptance criteria; it does not restate, narrow or extend them, and where it and the contract text diverge the contract governs.",
+    "AC-28 and AC-30 are only mutually consistent under AC-28's own 'by application code' qualifier, since AC-30 requires evidence under .development-os/evidence/ while AC-28 prohibits files there. B-02 records that reading. ENG-01 has no authority to settle it; if ENG-15 reads AC-28 as an absolute path prohibition the conflict is a contract defect for Product Operations, not a workstream decision.",
+    "The ordering constraint that WS-12 must land its runnable test command before WS-03 and WS-10 is an ENG-01 addition; the plan's declared edges do not express it (WS-03 depends only on WS-02). If a later workstream follows the plan's edges literally rather than this register, AC-30's clean-checkout reproducibility is at risk.",
+    "Five workstreams are directed to record not_applicable (WS-04, WS-05, WS-06, WS-07, WS-08) plus WS-11 with a carried limitation. That judgement rests on the contract's Unit 1 non-goals. If any later unit scope is read into this delivery, those dispositions become wrong. WS-09 and WS-10 declare dependencies on those runs, so an omitted record blocks two required-gate workstreams.",
+    "The contract's performance NFR is explicitly unquantified and no acceptance criterion asserts a frame-rate or input-latency threshold. WS-01 leaves it open and no workstream in this plan can close it; jump-timing fairness remains unmeasured for Unit 1.",
+    "AC-18's judgement half sits with the human product owner under final_user_visible_acceptance and is flagged conditional by ISS-20260809-028. No engineering workstream, including WS-14, can close it, so the delivery cannot reach a fully dispositioned state through engineering alone.",
+    "AC-21's stated verification requires changing the operating-system clock mid-run and AC-01 requires both a Chromium-based and a Gecko-based browser. Neither was attempted at WS-01 and neither is confirmed executable in this environment; both are registered as blockers rather than assumed available.",
+    "The working tree at the point WS-01 ran already carried unrelated intake bookkeeping (modified engineering/taskboard/workstreams.csv and three untracked .development-os/ files) created before this workstream. They are excluded from WS-01's changed-component list, but any AC-28 inventory built from git status rather than from the branch commits will misattribute them.",
+    "No pre-existing docs/ directory or engineering documentation convention existed in this repository to conform to; the path docs/engineering/WS-01-coordination.md was set by the WS-01 assignment, not derived from an established layout.",
+    "AR-01 endedAt offset interpretation is unsettled and sits on the Unit 3 seam: ADR-003 reads AC-19's 'ISO-8601 string with an explicit UTC offset' as UTC with the literal Z designator. A verifier requiring a numeric plus-or-minus HH:MM local offset would find Z insufficient. The code change is trivial but the contract change is not, because Unit 3 inherits whichever is chosen. Must be settled before ENG-03 implements.",
+    "AR-02 the score trace is entirely client-produced and every field is forgeable from a browser console; the record attests to nothing and its value is shape, not integrity. No anti-tamper measure was designed into Unit 1 by deliberate decision. The risk was accepted by the product owner in APR-870DC901FD68 and restated in DEC-20260809-001, bounded to Units 1 and 2, with server-side validation required from Unit 3 and to be designed at Unit 3. No workstream may re-accept it.",
+    "AR-03 the state signal is a claim by the implementation, not independent proof: a view that never updated data-game-state would not appear in the AC-26 key sweep. ENG-10 must pair the signal with a DOM assertion that no leaderboard, score table, catalogue, settings, profile, lobby or presence view exists in the document.",
+    "AR-04 the palette-as-single-source rule is unenforced by tooling; a single hex literal in CSS or in the renderer silently invalidates the AC-16 and AC-17 completeness claim. Mitigation is an automated assertion that no colour literal appears outside src/render/palette.js plus an ENG-01 review item under GATE-CODE-REVIEW.",
+    "AR-05 node_modules cannot be git-ignored from inside the write boundary: no root .gitignore exists at the base revision and the repository root is not a writable path, while node_modules is on the contract's own prohibitedPaths. Handling is to never git add it and to build the AC-28 inventory from the workstream commits per WS-01 B-07. If ENG-12 concludes a root .gitignore is necessary, that is a write outside both the narrowed set and the contract's allowedPaths and must be escalated to Product Operations, not created quietly.",
+    "AR-06 the opaque-plate and no-tweening rules constrain visual design. If the owner judges the result insufficiently 'modern and colourful' under final_user_visible_acceptance, the remedy is more saturated enumerated palettes and richer motion and shape, not relaxing the opacity or enumeration rules, which would reopen AC-16 and AC-17 completeness. AC-18's judgement half remains the owner's and no engineering workstream can close it.",
+    "AR-07 no non-visual representation of gameplay: the canvas is aria-hidden and conveys the play field visually only. No acceptance criterion requires a screen-reader-accessible representation of gameplay. Recorded as a limitation, not as a satisfied requirement.",
+    "AR-08 the performance requirement remains unquantified. No numeric frame-rate or input-latency budget exists in any artifact and the contract's NFR is explicitly UNKNOWN. Architecture makes the score frame-rate independent and asserts no budget. Carried open, consistent with WS-01 R-02.",
+    "Carried from WS-01 and not resolvable by ENG-02: B-01 (AC-30 needs a runnable command from a clean checkout, and install-time network use must be stated separately from the game's zero network use), B-02 (AC-30's evidence location under .development-os/ read against AC-28's prohibition, which ENG-01 reads as applying to application code and which is a contract defect to escalate if ENG-15 reads it as absolute), and B-05 (AC-21's OS-clock-change procedure may not be executable; the injected clock in ADR-003 section 2 is the inspectable substitute and must be disclosed as a substitute, never reported as the manual procedure).",
+    "ENG-02 did not disposition its own GATE-ARCHITECTURE and issued no verification disposition; only ENG-15 at WS-14 does so. No game code, no package.json, no lockfile and no CI workflow were created; every path named in ADR-002 and ADR-005 is a specification for WS-03 and WS-12, not an existing file.",
+    "In-browser dynamic gameplay could NOT be observed end to end. The Browser pane never composited frames in this environment, so the tab stayed document.hidden and requestAnimationFrame fired zero times per second. Consequently the following were verified only through the Node integration tier driving the real simulation modules, not through a live browser run: the jump arc on screen, score accrual over time, the collision to run-end transition in the page, the run-end panel showing the final score, restart clearing obstacles without a reload, and window.dinoDash.getScoreTrace() containing records after real runs. The trace accessor was observed returning [] on a fresh page only.",
+    "No screenshots of the assembled page (canvas plus DOM text layer) exist. Screenshot capture failed with 'the Browser pane is not displayed'. The captured images are the canvas play field rendered by the real renderer, not the composited page. Playwright was installed to work around this but its Chromium binary never downloaded (the browser CDN appears blocked in this environment; the install exited 0 with an empty ms-playwright directory).",
+    "AC-05 was evidenced as 'the handler calls preventDefault on Space and Up Arrow' (defaultPrevented true, and no key beyond those two prevents anything). The trusted-event consequence - that the document scroll position does not move in a short viewport - was NOT observed, because trusted key delivery was unavailable.",
+    "AC-14's visible focus ring was verified as a parsed CSS rule with the correct resolved colour, not as a rendered outline: the browser window never held focus (document.hasFocus() false), so :focus did not match at measurement time.",
+    "AC-16/AC-17 rendered-pixel confirmation covers the dawn variation live; noon and dusk rendered pixels were sampled from the real renderer driven inside the page rather than from a live run. The static computation covers all three variations exhaustively.",
+    "src/package.json containing type module is a judgement call. Without it Node resolves src/**/*.js as CommonJS and no unit test can import the delivery. It is inside the WS-03 boundary and ignored by browsers, but WS-12 may prefer type module in the root package.json, which would make this file redundant.",
+    "src/game/simulation.js is an addition to the module list in ADR-002 section 4. It is on the DOM-free side of the boundary, so the boundary rule is unchanged, but the file list in the ADR no longer matches the tree exactly.",
+    "input/keyboard.js falls back from KeyboardEvent.code to KeyboardEvent.key. This was added because the automation harness in this environment dispatches key events with an empty code. It recognises the same two keys and adds no third one, but it is a deviation from a strict code-only reading of ADR-001's API floor.",
+    "tests/tools/static-server.mjs duplicates a responsibility ADR-005 section 2 assigns to WS-12. It exists because nothing runnable exists at this revision; it should be superseded, and the npm script form of the AC-30 commands still depends on WS-12.",
+    "AC-30 is not closed by this workstream: no package.json, no lockfile and no Playwright browser tier exist at this revision, so no clean-checkout npm ci and npm test run was performed, and no accessibility-evidence command exists beyond the unit tier's static contrast computation. Evidence has not been recorded under .development-os/evidence/ because that path is outside the WS-03 write boundary.",
+    "AC-18's judgement half (modern and colourful) is the product owner's under final_user_visible_acceptance and is not claimed here; only the objective half (three distinct hues per variation with HSV saturation above 0.25, and non-greyscale rendering) is evidenced.",
+    "ADR-003's open interpretation risk on AC-19 is unchanged: endedAt uses the Z designator for explicit UTC offset. A verifier requiring a numeric plus-minus HH:MM would read it differently.",
+    "The canvas is aria-hidden, so gameplay is not conveyed to assistive technology. This is ADR-002's recorded known limitation, carried forward, not a satisfied requirement.",
+    "Gecko was neither tested nor claimed, per DEC-20260809-001 and ADR-001. No engine-specific API is used anywhere in the delivery.",
+    "L-01 - This is a static, source-level check, not a runtime observation. Zero call sites is strong evidence for zero requests, but AC-22, AC-23 and AC-24 are written against the browser network panel and storage inspector. That browser-tier evidence is WS-10's under GATE-AUTOMATED-TESTS and is not claimed here.",
+    "L-02 - The scan covers src/ only, which is the whole of what the browser loads (ADR-005 section 1: no build step, the source is the running artifact). tests/ and dev-time tooling are outside this determination; tests/tools/static-server.mjs is a test-time process, not part of the game.",
+    "L-03 - Comment text names the very APIs it disclaims, so a naive grep of src/ returns 15 hits that reduce to zero executable occurrences. A reviewer must apply the comment strip or the source-hygiene tier before concluding anything.",
+    "L-04 - window.dinoDash deliberately widens the page's global surface (ADR-003 section 4). It is read-only, side-effect free and not keyboard-reachable, so it is an observation surface and not an integration point, but it is the one globally reachable name the delivery adds; a later unit adding a setter would convert it into an attack surface.",
+    "L-05 - Client-side score forgeability is already accepted by the owner in DEC-20260809-001, bounded to Units 1 and 2, with server-side validation required from Unit 3 and to be decided at Unit 3. Recorded as inherited context; ENG-04 does not re-accept it.",
+    "L-06 - AC-24 governs the running game, not the toolchain. A future clean-checkout install step (npm ci plus a Playwright browser download) touches the network at install time. WS-01 B-01 and ADR-005 section 4 require the install command and the test command to be stated as distinct steps or a verifier will read the evidence as self-contradictory.",
+    "L-07 - not_applicable is scoped to Unit 1 at revision bf5ac18. Units 2 through 5 are not contracted and nothing in this record pre-clears them. Unit 3's needs from ENG-04 are stated in the document as open questions only: a submission contract, a server-side validation position, an identity decision that does not exist yet, the fact that endedAt carries no local offset, and the live AC-19 interpretation risk that Z may be read as insufficient against a numeric offset - one formatting function in Unit 1 but a data migration once a server persists it.",
+    "L-08 - ENG-04 owns none of AC-22 to AC-25; WS-01 section 3 assigns them to WS-03 with WS-09 and WS-10 contributing. The per-AC findings in the document are domain review findings, not dispositions. Only ENG-15 at WS-14 issues the delivery's verification disposition.",
+    "L-01 - One platform premise is reasoned, not measured. That Chromium suspends or heavily throttles requestAnimationFrame for a hidden tab while performance.now() keeps advancing is documented platform behaviour and is the premise of the frame schedule used; it was not observed in a browser here. What was measured is the delivered code's response to that schedule. Browser-side confirmation belongs to WS-10 and is not claimed.",
+    "L-02 - The background-gap check is a harness, not the game. It drives advanceRun/markRunStart directly with an injected deterministic random source; it does not run main.js, the state machine, the renderer or the HUD. Sufficient for the claim made, since score and elapsed time are computed entirely inside those two functions, but not a substitute for a browser-tier observation after a real tab switch.",
+    "L-03 - Word-boundary matching materially changes these scan results. A plain substring scan reports expo 45 times in src/ (inside 'export') and freeze 41 times as though a Page Lifecycle handler existed (all Object.freeze). Both were disambiguated. Recorded so a later reader running a naive grep does not rediscover the discrepancy as a finding.",
+    "L-04 - The scan covers the repository as it stands, and node_modules does not exist yet. WS-12 has not recorded a run, so there is no root package.json and no installed dependency tree. If ENG-12 later adds dev dependencies, the SBOM view of that is WS-09's, not this workstream's.",
+    "L-05 - The background-time scoring property is recorded, not accepted. ENG-05 has no authority to accept a product risk and did not. DEC-20260809-001 covers deliberate client-side score forgery bounded to Units 1 and 2; it does not address time-derived accrual while hidden, and this record must not be cited as extending it. It is also not recorded as an AC failure - it satisfies AC-08, AC-20 and AC-21 as written.",
+    "L-06 - not_applicable is scoped to Unit 1 at this revision and is not a standing judgement that Dino Dash will never have a client. Units 2 through 5 are not contracted and nothing here pre-clears them.",
+    "R-05 - Open for a later unit: whether the score is meant to measure play or wall-clock time must be settled before Unit 3 puts these values in a shared table. If the answer is play, the obvious visibilitychange fix changes the meaning of sessionLengthMs, whose name, type and unit are frozen by ADR-003 section 6 (additive fields only), and would need re-checking against AC-20's 250 ms tolerance. This is a product question, not a delivery detail.",
+    "R-06 - Open for a later unit: no test covers score accrual across a frame gap; only the physics clamp is covered. Whatever is decided above, a unit-tier test driving advanceRun across a gap is needed, and needs no browser.",
+    "R-07 - Open for a later unit: AC-24's playable offline means the loaded page keeps working with the network off, not that the game is available without the static origin. With no service worker and no cache manifest, a cold load still requires the server. A PWA route would introduce a persistent cache and collide directly with AC-22 and AC-23, so it is a product-direction question behind the human product_direction_or_priority gate, not an engineering choice.",
+    "R-08 - Open for a later unit: there is no upgrade surface at all. window.dinoDash.version === 1 is a page-local constant on a read-only observation accessor, not an application version; there is no update channel and no cached older copy to supersede. If touch is ever added it must be additive to src/input/, since AC-12 requires the keyboard path to remain complete on its own, and AC-15 would require any new affordance to be named on screen.",
+    "L-01 The reload evidence is a Node module re-evaluation analogue, not a browser observation. AC-22/AC-23 are written against the browser storage inspector and network panel; that evidence is WS-10's under GATE-AUTOMATED-TESTS and is not claimed or pre-empted here.",
+    "L-02 The scan is static and scoped to src/. Zero call sites is source-level evidence, not a storage-inspector reading. tests/ is outside the determination.",
+    "L-03 The four tamper results are strict-mode TypeErrors; in a browser console (sloppy mode) the same operations fail silently. Same outcome, different diagnostics - no error in DevTools is not a regression.",
+    "L-04 endedAt uses the Z designator and ADR-003 carries that as a live open interpretation risk (AC-19 says explicit UTC offset; a verifier requiring numeric plus-minus HH:MM would find Z insufficient). Unsettled at this revision. In Unit 1 it is one formatting function; once a server stores the field it becomes a data migration - rows rewritten or dual-read forever, and any index or comparison on the string form rebuilt. ENG-06 has no authority to settle it.",
+    "L-05 The 0.594% score/sessionLengthMs divergence is measured on a synthetic elapsedMs sweep through the delivered functions, not on gameplay; it characterises the rounding relationship, not an observed rate in play.",
+    "L-06 source-hygiene.test.mjs forbids 5 storage tokens; this review checked 35. Cache Storage, OPFS/File System Access, navigator.storage and the window.name / history.replaceState side channels are unasserted by any test. Handed to WS-10 as coverage, not filed as a defect - nothing in src/ uses them.",
+    "L-07 Client-side score forgeability is the owner's accepted risk (DEC-20260809-001, bounded to Units 1 and 2, server-side validation required from Unit 3). Recorded as inherited context and deliberately not re-accepted here.",
+    "L-08 not_applicable is scoped to Unit 1 at this revision; it is not a standing judgement that Dino Dash will never have a database, and nothing here pre-clears Units 2-5.",
+    "Carried for later units, as analysis and not design: the record carries no identifier (no idempotency key, no stable handle, no uniqueness guarantee - any store must invent a key, and ADR-003 6.4 gates an owner key on a privacy obligation that is still open); no schema version (window.dinoDash.version is the accessor's, so presence-inference over keys is the only versioning a durable row will have); no device marker (records from two devices are unmergeable - nothing to partition, attribute or dedupe on except endedAt); endedAt is the only wall-clock field, so it is unsound as an ordering key (a mid-session clock change can make record n+1 earlier than record n) and endedAt minus sessionLengthMs is NOT the run start instant because the two come from different clocks.",
+    "L-01 - scans are static over src/, tests/ and the tracked file list, not the browser network panel; AC-24's runtime verification is WS-10's.",
+    "L-02 - a token scan cannot prove the absence of an unnamed vendor; 105 tokens were checked. The gap closes structurally: WS-04 measured zero network APIs and zero external specifiers, so a snippet would have nowhere to send.",
+    "L-03 - the two-clock analysis uses injected clocks, not a moved OS clock (the substitute WS-01 B-05 anticipates). Disclosed as a substitute; it does not discharge AC-21.",
+    "L-04 - the endedAt Z-designator risk is carried, not closed (ADR-003, WS-04, WS-06); no reformatting recovers a local offset never captured.",
+    "L-06 - not_applicable is scoped to Unit 1 at this revision: neither a judgement that Dino Dash will never have analytics or a model, nor a finding that Unit 1 should have had measurement.",
+    "L-07 - the workspace's open privacy obligation is untouched; Unit 1 collecting no personal data closes none of it. GATE-PRIVACY-COMPLIANCE is ENG-09's.",
+    "No browser was driven. The file:// failure is verified only at its preconditions (type=module, zero classic-script fallback, all-relative specifiers). Observing the Chromium console error is WS-10 browser-tier work under AC-01 and is not claimed here.",
+    "WS-12 has not run: no root package.json, lockfile or CI workflow exists. All artifact figures are the WS-03 delivery and should not change under ADR-005 section 1 (no build step), but a re-measure after WS-12 is the correct check if doubted.",
+    "Section 6 rests on a coordinator-relayed owner disposition for Unit 3. ENG-08 did not read the product workspace D:/os-test/dino-dash and does not restate the decision identifier; if the relay is inaccurate its four consequences are too. Sections 1-5 do not depend on it.",
+    "GATE-INFRA-NETWORK is not waived, deferred or pre-cleared for any later unit; it becomes live as soon as a unit introduces a hosted component.",
+    "The owner's client-side score-tamperability risk acceptance is bounded to Units 1 and 2 and is neither re-accepted nor widened here. real_money_or_provider_operation, product_direction_or_priority and final_user_visible_acceptance are neither engaged nor pre-cleared.",
+    "Carried unchanged: contract security NFR / ISS-20260809-010 (whether Unit 1 must emit an attestable score trace is a Unit 1 question generated by Unit 3), privacy NFR / ISS-20260809-015 (self-hosting relocates the friend-group data, it does not reduce the unmet consent/retention/deletion obligation), and WS-01 R-02 (performance budget remains UNKNOWN; ENG-08 invented none).",
+    "Pre-existing working-tree state (modified engineering/taskboard/workstreams.csv, untracked .development-os/ files) predates WS-08 and is intake bookkeeping, not this delivery, per WS-01 B-07. Only the one docs/ file was staged.",
+    "F-01 state-machine.js:45 reads TRANSITIONS[state][event] through the prototype chain: 10 inherited names including constructor and __proto__ are accepted as events and drive the state off STATE_VALUES. Not reachable at d5b71dd - transition() has 3 call sites, all passing literals - so AC-26 holds and it is not an XSS vector (dataset assignment sets an attribute value). The existing AC-26 test uses 6 invented event names, none an Object.prototype property, so the suite cannot catch it. Becomes real if any later unit routes an external string into transition().",
+    "F-02 formatScore emits 1e+308 for inputs at or above 1e21; the only non-digit characters it can produce are e and +. Unreachable in production (97298 swept values produced digits only), neither character is HTML-significant, and the sink is textContent.",
+    "F-03 No Content-Security-Policy and no security headers are shipped. Headers belong to an origin and WS-08 recorded that no deployed environment exists; a meta CSP was possible but src/ is sealed. Carried for whoever stands up a real origin.",
+    "F-04 Three GitHub Actions pinned by mutable tag v4, 0 of 3 by commit SHA - the delivery's only third-party components. Bounded: the workflow has never executed, has contents read, publishes nothing and performs no install; there is no build step so it cannot alter the shipped artifact.",
+    "F-05 No root .gitignore; nothing prevents an accidental node_modules/ or a future .env from being staged. None exists today. Outside the WS-09 write boundary.",
+    "F-06 devicePixelRatio is the delivery's only device-characteristic read. Never stored, rendered, traced or transmitted.",
+    "F-07 carried from WS-05, not re-accepted and not extended: a run left in a hidden tab accrues +600 points per 60 s at zero risk. WS-05 is explicit that DEC-20260809-001 covers deliberate forgery and does not address time-derived accrual while hidden.",
+    "L-07 Client-side score forgeability is the product owner's accepted risk (APR-870DC901FD68, restated in DEC-20260809-001, bounded to Units 1 and 2, server-side validation required from Unit 3 and to be designed at Unit 3). WS-02 AR-02: no workstream may re-accept it. ENG-09 records it with attribution, designs no anti-tamper measure, and neither re-accepts, re-scopes nor discharges it.",
+    "Privacy obligation for Units 3 and 4 is UNMET and UNCHANGED. Zero of consent, retention, deletion and anonymization exists anywhere in this workspace; ISS-20260809-015 blocks it; ADR-003 gates any added identifier field. Nothing in this record may be cited as clearing any part of it.",
+    "L-01 Every scan is static or module-level. Zero call sites in source is not the browser storage inspector or network panel; AC-22 to AC-25's runtime verification is WS-10's under GATE-AUTOMATED-TESTS and is not claimed here.",
+    "L-02 A token scan cannot prove the absence of an unnamed API. 51 injection, 34 network, 15 persistence and 44 identity tokens were checked; the full lists are in tests/.results/security-surface.json so coverage can be judged rather than trusted.",
+    "L-04 npm audit finding 0 vulnerabilities across 0 dependencies is trivially true and attests to nothing about the delivery's code, Node, or the browser.",
+    "L-05 The secret scan is pattern-based: 27 patterns, 85 text files, 10142 added lines. A credential in a shape none of the 27 describes, or split across lines, would not be found; 4 binary files (docs/media/*.png) were skipped by extension.",
+    "L-06 F-01's unreachability is verified at d5b71dd only and no test guards it.",
+    "L-09 Every determination is scoped to Unit 1 at this revision. Units 2 to 5 are not contracted and nothing here pre-clears any of them in either direction.",
+    "L-10 The CI workflow has never executed; F-04's exposure assessment rests partly on that.",
+    "L-11 If Unit 1 is deployed onto a shared origin, other content shares the realm. Unit 1 stores nothing so there is nothing to steal, but nothing in the bundle prevents injection from the other direction. A hosting decision nobody has made.",
+    "No verification disposition for the delivery is issued here; only ENG-15 at WS-14 does that.",
+    "L-01 no browser tier exists. Cold Playwright Chromium acquisition ran 10 minutes with zero output and zero bytes downloaded into a fresh browsers path, while npm itself was reachable. This sharpens WS-12 R-05 from unobserved to observed-and-failed. No dependency, config or script was added, so no phantom dependency and no broken stated command was left behind",
+    "L-02 AC-16/AC-17 rendered-pixel half stays open; WS-12 R-01 inherited unchanged, not closed",
+    "L-03 AC-30 names accessibility evidence for AC-12, AC-14, AC-16 and AC-17; a command exists for AC-16/AC-17 only. AC-12 has a logic-tier substitute; AC-14 has none, because a rendered focus indicator is unobservable here",
+    "L-04 keyboard-journey re-creates main.js's wiring rather than importing it, because main.js touches document at import time, so a divergence between the two would not be caught",
+    "L-05 the F-01 characterisation tests fail when the defect is fixed; the file header instructs the fixer to invert them rather than delete them, and to keep the containment tests either way",
+    "L-06 the containment guard pins exact argument expressions and is brittle by design; a harmless main.js refactor fails it",
+    "L-07 a token scan cannot prove the absence of an unnamed API; the five token lists are literals in the test file so coverage is judgeable rather than trusted",
+    "L-08 the matrix's disposition column is ENG-10's judgement; the harness only measures which tests name which criterion and rejects contradictions",
+    "L-09 AC-20's stopwatch tolerance and AC-21's OS-clock procedure are met by injected clocks, the declared substitutes under WS-01 B-05, and are reported as substitutes",
+    "L-10 frame-gap behaviour is characterised, not accepted. WS-05's distinction is preserved: DEC-20260809-001 covers deliberate forgery and does not address time-derived accrual while hidden. Client-side score forgeability is the owner's accepted risk under APR-870DC901FD68 and is not re-accepted here",
+    "L-11 README.md was modified and a new root file BENCHMARK.md appeared in the working tree during this workstream, authored by some process other than WS-10. Both are outside WS-10's write boundary, neither was staged or committed, both left as found. BENCHMARK.md states 61 tests, correct at bd43f5f and superseded by 114",
+    "L-12 every determination is scoped to Unit 1 at this revision; Units 2 to 5 are not contracted and nothing here pre-clears them",
+    "PERF-R-01 jump apex varies with refresh rate: 134.44 px at 30 fps vs 145.88 px at 144 fps, 8.5% spread against a 66 px character and 82 px tallest cactus. Touches the contract's jump timing is fair phrase directly. Measured, not judged; no threshold asserted, no code changed.",
+    "PERF-R-02 the render half of the frame is unmeasured. canvas-renderer.js and hud.js need a real canvas and layout engine and cannot be driven in Node. Any total frame-time budget needs a browser-tier measurement that does not yet exist; the 0.212 us figure is simulation only and must not be read as the whole frame.",
+    "PERF-R-03 all figures come from one developer workstation, not a target-user device, and are likely faster than the low end of the real audience. Single-machine figures do not transfer; this is exactly why the contract requires a device baseline before a budget.",
+    "PERF-R-04 the score trace grows unbounded by design (about 58.3 B per run end). Harmless at Unit 1 scale; inherited by Unit 3 at the seam ADR-002 names.",
+    "PERF-R-05 GATE-PERFORMANCE and GATE-RELIABILITY are recorded gaps, not passes, and stay open into later units alongside WS-01 R-02, ISS-20260809-019 and DD-0008 GAP 2.",
+    "WS-05's background-tab scoring property (60 s hidden equals +600 points at zero risk) is referenced and its 36 px physics half corroborated, but is NOT re-accepted, re-scoped or reclassified by ENG-11; the owner's DEC-20260809-001 acceptance is untouched.",
+    "No package.json exists at this revision - WS-12 has not run - so both harnesses are invoked as bare node commands and are not yet reachable through any npm script. ENG-12 may wish to expose them, but they must never be added to the pass/fail test script.",
+    "R-01 AC-16/AC-17 NOT FULLY CLOSED: the contrast evidence measures the DECLARED palette, not rendered pixels. The criteria ask for ratios sampled from the background actually rendered. Closing this needs ADR-005's browser tier (WS-10). Recorded gap, not a pass.",
+    "R-07 NO BROWSER TIER SHIPPED, stated plainly with its cost: ADR-005 proposed Playwright and WS-03 recorded its Chromium binary never downloaded here. No dependency was added, because a stated command that cannot install is worse than an absent one. COST: AC-12 (keyboard-only journey) has no machine evidence at all, AC-14 has only its focus-colour pair measured, and the rendered-pixel half of AC-16/AC-17 is unmeasured. Section 6 states the manual procedure for all three.",
+    "R-02 core.autocrlf=true with no .gitattributes: byte totals and src/ digests are checkout-dependent on Windows. perf:artifact reported 43842 B in the clean checkout against WS-11's and WS-08's 42517 B; request count 17, non-200 count 0 and disk-equals-wire are unaffected. A root .gitattributes is outside the write boundary, so raised and not created.",
+    "R-03 the engines floor >=20.11.0 is declared, not measured: everything ran on Node v22.23.2 only. The CI matrix pins 20.11.0 to exercise it, but that workflow has never executed.",
+    "R-04 the JUnit totals are XML comments rather than testsuite attributes: a parser requiring tests= and failures= reads zero. Element counts and the process exit code are correct and are what CI gates on.",
+    "R-05 no cold acquisition of Playwright was ever observed; nothing evidences that a fresh machine could obtain the package or the browser build.",
+    "R-06 npm ci is in no stated procedure: the lockfile is authentic but pins an empty dependency set.",
+    "R-08 the CI workflow has NEVER RUN. Its own header says so. What is evidenced is that the two commands it runs executed from a clean checkout.",
+    "FINDING, RECORDED NOT FIXED: src/package.json is now redundant, since WS-12 set type module at the root, exactly as WS-03 predicted. It is NOT deleted because src/ is sealed at WS-03. It is harmless rather than inert - as the nearest package.json to src/**, it is what Node actually resolves against. Disposal belongs to whichever workstream owns src/.",
+    "The a11y sha256 is per-run, not per-revision, because generatedAt is embedded. The digest attests the artifact for deposition; the reproducible values are the 33 rows and their ratios, identical across both proof runs.",
+    "AC-30 requires deposition under .development-os/evidence/ with kind, sha256 and sourceRevision. That path is outside this workstream's write boundary (AC-28), so WS-12 deposited nothing there; the artifacts carry all three fields ready for deposition. WS-01 blocker B-02 records the reading under which the two criteria are consistent.",
+    "No browser tier. WS-10's cold Playwright acquisition: ten minutes, zero output, zero bytes, exit 143. Fourteen criteria partial or none for this one reason. Carried in runbook R-06 and overview section 9.1",
+    "Rendered-pixel half of AC-16/AC-17 unmeasured - evidence:a11y measures the declared palette only. A failing row proves the palette cannot pass; a passing row does not close the criterion. runbook R-01",
+    "Performance budget UNSET and must not be invented; GATE-PERFORMANCE and GATE-RELIABILITY are recorded gaps, not passes. PERF-R-01 (8.5% jump-apex spread across 30-144 fps) documented as measurement, explicitly not judged. runbook R-05",
+    "WS-09 F-01 guarded, not fixed - prototype-chain lookup in transition(); unreachable at this revision, characterised and containment-tested; src/ is sealed. Characterisation tests are written to FAIL when it is fixed. runbook R-08",
+    "endedAt Z interpretation risk live against AC-19's explicit UTC offset; a verifier requiring numeric plus-minus HH:MM would find Z insufficient. score-trace-contract section 2, runbook R-09",
+    "AC-30 names AC-12 and AC-14 and no command produces evidence for either; AC-14 has no substitute at all. Procedure stated in runbook section 2. runbook R-07",
+    "Score trace grows unboundedly by design (about 58.3 B per record, one per run end); inherited by Unit 3 at the seam",
+    "Hidden-tab time-derived score accrual (+600 points per 60 s hidden) documented and kept DISTINCT from DEC-20260809-001's forgery acceptance; not re-accepted here",
+    "CI workflow has never been executed; engines floor >=20.11.0 declared but only v22.23.2 exercised. runbook R-03",
+    "CRLF and no .gitattributes makes byte totals and src/ digests checkout-dependent on Windows; raised, not fixed (outside boundary). runbook R-02",
+    "Evidence deposition under .development-os/evidence/ not performed - outside this write boundary. runbook R-11",
+    "aria-hidden canvas: the play field is not conveyed to assistive technology - recorded as a known limitation, not a satisfied requirement",
+    "R-01 src/ byte totals and any sha256 over src/ files are checkout-dependent on Windows (core.autocrlf true, no .gitattributes). A root .gitattributes would settle it; outside this workstream's write boundary.",
+    "R-02 F-01 remains LIVE and UNFIXED in sealed source, unreachable only because all three call sites pass literals. The first unit to route a string into transition() makes it real. True breadth is 12 inherited names, not the 10 recorded by WS-09.",
+    "R-03 tests/security/surface-scan.mjs hard-codes its probe list and will keep under-reporting F-01's breadth.",
+    "R-04 secret-scan.mjs will keep reporting 2 self-matches until it excludes its own source; a future reader must not read them as credential material.",
+    "R-05 Fourteen criteria stay partial and AC-01 stays none until a browser tier exists. This verification covers the unit tier only - NO rendered pixel was observed by this workstream."
+  ],
+  "producerActorId": "actor-eng-01",
+  "verification": {
+    "verifierActorId": "actor-eng-15",
+    "disposition": "verified",
+    "verifiedAt": "2026-08-11T15:16:37.606Z",
+    "evidenceReferences": [
+      ".development-os/evidence/GATE-INDEPENDENT-VERIFICATION.json"
+    ]
+  },
+  "completedAt": "2026-08-11T15:16:37.606Z"
+}

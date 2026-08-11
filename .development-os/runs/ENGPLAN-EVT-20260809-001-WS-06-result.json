@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "workstreamId": "WS-06",
+  "ownerRole": "ENG-06",
+  "producerActorId": "actor-eng-06",
+  "status": "completed",
+  "verificationDisposition": "not_applicable",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "changedComponents": [
+    "docs/engineering/WS-06-storage-review.md"
+  ],
+  "commands": [
+    "git rev-parse HEAD",
+    "node --version",
+    "find src -type f | wc -l",
+    "git ls-files | wc -l",
+    "node storage-scan.cjs (walks all 18 files under src/, counts 35 storage tokens raw and after stripping block/HTML/line comments with the same stripper tests/unit/source-hygiene.test.mjs uses)",
+    "grep -rnoE \"localStorage|sessionStorage|indexedDB|IndexedDB|document.cookie|cookie\" src/ | sort",
+    "git ls-files | grep -inE \"\\.sql$|\\.db$|\\.sqlite|\\.ddl$|schema|migration|seed|dump|backup|prisma|knex|sequelize|typeorm|drizzle|flyway|liquibase|alembic\"",
+    "ls -d database migrations infrastructure services app apps packages",
+    "grep -rn \"scoreTrace\\|createScoreTrace\" src/",
+    "grep -rn \"localStorage\\|sessionStorage\\|indexedDB\\|cookie\" tests/",
+    "node trace-harness.mjs (imports src/trace/score-trace.js, appends 4 records, reinstalls the src/main.js:93-109 accessor verbatim, then tests copy-on-read identity, mutation of the returned copy, and assign/delete/redefine/patch against window.dinoDash; finally compares a fresh createScoreTrace, a fresh-specifier module re-evaluation and a cached re-import)",
+    "node --input-type=module -e (sweep elapsedMs 0..120000 at 0.4 ms through scoreForElapsedMs and appendRunEnd, compare floor(sessionLengthMs*0.01) to the stored score, print divergence count/max and JSON byte size of one record)",
+    "node --test tests/unit/score-trace.test.mjs",
+    "node -e (print the GATE-DATABASE entry, all ENG-06-owned gates and all required:true gates from engineering/quality/gates.json)",
+    "git add docs/engineering/WS-06-storage-review.md",
+    "git -c user.name=\"ENG-06 Database and Storage\" -c user.email=\"actor-eng-06@dino-dash.local\" commit -m \"WS-06 Database and Storage for DEVREQ-EVT-20260809-001: recorded not-applicable determination with verified zero storage call sites and in-memory trace lifetime evidence\""
+  ],
+  "evidence": [
+    "Revision reviewed 963cf74a14813b3f8ce0e9a2fadca5eaaf471d48; commit produced ae8895e1aacb28c675aa4c78ad23da7848fee1d2; Node v22.23.2; 18 files under src/, 77 tracked files.",
+    "Storage API call sites in src/ after comment stripping: 0, across 35 tokens and all 18 files. Raw total 9, all 9 inside two comment blocks (src/main.js:6-7, src/trace/score-trace.js:10). 26 of 35 tokens absent even from comments, including caches/CacheStorage, navigator.storage, showSaveFilePicker, getDirectory, createWritable, OPFS, requestFileSystem, serviceWorker, window.name, history.pushState/replaceState.",
+    "Repository level: 6 filename matches across 77 tracked files, all 6 are engineering/schemas/*.schema.json development-OS record schemas; zero .sql/.ddl/.db/.sqlite, zero seed/dump, zero prisma/knex/sequelize/typeorm/drizzle/flyway/liquibase/alembic. None of database/ migrations/ infrastructure/ services/ app/ apps/ packages/ exists; none created.",
+    "Trace lifetime read from source: array is const records = [] at src/trace/score-trace.js:36, a closure local; created once at line 69 (export const scoreTrace = createScoreTrace()) during module evaluation at bootstrap; grows only via records.push at line 48, reached only from appendRunEnd, called only at src/main.js:56 on the running to run-end transition; destroyed by nothing in the delivery - no delete/splice/pop/shift/length=0 and no clear function - it dies with the page's JavaScript realm. Exactly 3 references to the trace in all of src/ (main.js:18, 56, 97).",
+    "Harness: size 0 at import, 1/2/3/4 after four appends; record keys exactly endedAt, score, sessionLengthMs; sample record with score 428, endedAt 2026-08-11T08:03:10.992Z, sessionLengthMs 42871.",
+    "Copy-on-read verified: two getScoreTrace() calls give a===b false and a[0]===b[0] false but deep-equal true; pushing a forged record, setting copy[0].score=-1 and truncating the copy left trace size 4 and trace[0].score 0.",
+    "Unreachable for mutation via window.dinoDash: assign, delete, redefine and monkey-patch all four threw TypeError; descriptor writable false, configurable false, enumerable true; accessor frozen true; trace object frozen with own props appendRunEnd, list, size; no own property is an array; trace size 4 after every attempt.",
+    "Per-page-session verified by analogue: createScoreTrace() gives 0, module re-evaluated under a fresh specifier gives 0, cached re-import of the same specifier gives 4.",
+    "One record is 68 JSON bytes. Over 300001 swept records, floor(sessionLengthMs*0.01) diverges from the stored score in 1782 cases (0.594%), always by exactly 1 point, first at elapsedMs 99.6 giving score 0 and sessionLengthMs 100 versus derived 1 (score floors raw elapsedMs, sessionLengthMs is Math.round of the same value).",
+    "node --test tests/unit/score-trace.test.mjs: 10 tests, 10 pass, 0 fail, 118.6633 ms, with no npm ci and no node_modules. The only storage token anywhere under tests/ is the five-token forbidden list at tests/unit/source-hygiene.test.mjs:72.",
+    "GATE-DATABASE: id GATE-DATABASE, domain database, ownerRole ENG-06, required false, evidence [migration plan, backup and rollback proof, query or index evidence]. It is the only gate owned by ENG-06. NOT ENGAGED: all three named artifacts cannot exist - no schema at base or delivery revision so no diff to migrate, no durable byte to back up or roll back, no query engine/query/index (the whole read API is list(), a full chronological copy). The 7 required:true gates are ARCHITECTURE to ENG-02, CODE-REVIEW to ENG-01, AUTOMATED-TESTS to ENG-10, SECURITY to ENG-09, SUPPLY-CHAIN to ENG-09, DOCUMENTATION to ENG-14, INDEPENDENT-VERIFICATION to ENG-15; none is ENG-06's, so no required gate is affected.",
+    "engineering/standards/ holds 8 standards and none covers database_storage; there is no domain standard for WS-06 to discharge."
+  ],
+  "knownRisks": [
+    "L-01 The reload evidence is a Node module re-evaluation analogue, not a browser observation. AC-22/AC-23 are written against the browser storage inspector and network panel; that evidence is WS-10's under GATE-AUTOMATED-TESTS and is not claimed or pre-empted here.",
+    "L-02 The scan is static and scoped to src/. Zero call sites is source-level evidence, not a storage-inspector reading. tests/ is outside the determination.",
+    "L-03 The four tamper results are strict-mode TypeErrors; in a browser console (sloppy mode) the same operations fail silently. Same outcome, different diagnostics - no error in DevTools is not a regression.",
+    "L-04 endedAt uses the Z designator and ADR-003 carries that as a live open interpretation risk (AC-19 says explicit UTC offset; a verifier requiring numeric plus-minus HH:MM would find Z insufficient). Unsettled at this revision. In Unit 1 it is one formatting function; once a server stores the field it becomes a data migration - rows rewritten or dual-read forever, and any index or comparison on the string form rebuilt. ENG-06 has no authority to settle it.",
+    "L-05 The 0.594% score/sessionLengthMs divergence is measured on a synthetic elapsedMs sweep through the delivered functions, not on gameplay; it characterises the rounding relationship, not an observed rate in play.",
+    "L-06 source-hygiene.test.mjs forbids 5 storage tokens; this review checked 35. Cache Storage, OPFS/File System Access, navigator.storage and the window.name / history.replaceState side channels are unasserted by any test. Handed to WS-10 as coverage, not filed as a defect - nothing in src/ uses them.",
+    "L-07 Client-side score forgeability is the owner's accepted risk (DEC-20260809-001, bounded to Units 1 and 2, server-side validation required from Unit 3). Recorded as inherited context and deliberately not re-accepted here.",
+    "L-08 not_applicable is scoped to Unit 1 at this revision; it is not a standing judgement that Dino Dash will never have a database, and nothing here pre-clears Units 2-5.",
+    "Carried for later units, as analysis and not design: the record carries no identifier (no idempotency key, no stable handle, no uniqueness guarantee - any store must invent a key, and ADR-003 6.4 gates an owner key on a privacy obligation that is still open); no schema version (window.dinoDash.version is the accessor's, so presence-inference over keys is the only versioning a durable row will have); no device marker (records from two devices are unmergeable - nothing to partition, attribute or dedupe on except endedAt); endedAt is the only wall-clock field, so it is unsound as an ordering key (a mid-session clock change can make record n+1 earlier than record n) and endedAt minus sessionLengthMs is NOT the run start instant because the two come from different clocks."
+  ],
+  "completedAt": "2026-08-11T08:10:07Z"
+}

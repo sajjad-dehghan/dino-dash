@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "1.0.0",
+  "gateId": "GATE-DATABASE",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "relevantWorkstreamIds": [
+    "WS-06",
+    "WS-14"
+  ],
+  "workstreamRuns": [
+    {
+      "workstreamId": "WS-06",
+      "ownerRole": "ENG-06",
+      "status": "completed",
+      "verificationDisposition": "not_applicable",
+      "commands": [
+        "git rev-parse HEAD",
+        "node --version",
+        "find src -type f | wc -l",
+        "git ls-files | wc -l",
+        "node storage-scan.cjs (walks all 18 files under src/, counts 35 storage tokens raw and after stripping block/HTML/line comments with the same stripper tests/unit/source-hygiene.test.mjs uses)",
+        "grep -rnoE \"localStorage|sessionStorage|indexedDB|IndexedDB|document.cookie|cookie\" src/ | sort",
+        "git ls-files | grep -inE \"\\.sql$|\\.db$|\\.sqlite|\\.ddl$|schema|migration|seed|dump|backup|prisma|knex|sequelize|typeorm|drizzle|flyway|liquibase|alembic\"",
+        "ls -d database migrations infrastructure services app apps packages",
+        "grep -rn \"scoreTrace\\|createScoreTrace\" src/",
+        "grep -rn \"localStorage\\|sessionStorage\\|indexedDB\\|cookie\" tests/",
+        "node trace-harness.mjs (imports src/trace/score-trace.js, appends 4 records, reinstalls the src/main.js:93-109 accessor verbatim, then tests copy-on-read identity, mutation of the returned copy, and assign/delete/redefine/patch against window.dinoDash; finally compares a fresh createScoreTrace, a fresh-specifier module re-evaluation and a cached re-import)",
+        "node --input-type=module -e (sweep elapsedMs 0..120000 at 0.4 ms through scoreForElapsedMs and appendRunEnd, compare floor(sessionLengthMs*0.01) to the stored score, print divergence count/max and JSON byte size of one record)",
+        "node --test tests/unit/score-trace.test.mjs",
+        "node -e (print the GATE-DATABASE entry, all ENG-06-owned gates and all required:true gates from engineering/quality/gates.json)",
+        "git add docs/engineering/WS-06-storage-review.md",
+        "git -c user.name=\"ENG-06 Database and Storage\" -c user.email=\"actor-eng-06@dino-dash.local\" commit -m \"WS-06 Database and Storage for DEVREQ-EVT-20260809-001: recorded not-applicable determination with verified zero storage call sites and in-memory trace lifetime evidence\""
+      ],
+      "evidence": [
+        "Revision reviewed 963cf74a14813b3f8ce0e9a2fadca5eaaf471d48; commit produced ae8895e1aacb28c675aa4c78ad23da7848fee1d2; Node v22.23.2; 18 files under src/, 77 tracked files.",
+        "Storage API call sites in src/ after comment stripping: 0, across 35 tokens and all 18 files. Raw total 9, all 9 inside two comment blocks (src/main.js:6-7, src/trace/score-trace.js:10). 26 of 35 tokens absent even from comments, including caches/CacheStorage, navigator.storage, showSaveFilePicker, getDirectory, createWritable, OPFS, requestFileSystem, serviceWorker, window.name, history.pushState/replaceState.",
+        "Repository level: 6 filename matches across 77 tracked files, all 6 are engineering/schemas/*.schema.json development-OS record schemas; zero .sql/.ddl/.db/.sqlite, zero seed/dump, zero prisma/knex/sequelize/typeorm/drizzle/flyway/liquibase/alembic. None of database/ migrations/ infrastructure/ services/ app/ apps/ packages/ exists; none created.",
+        "Trace lifetime read from source: array is const records = [] at src/trace/score-trace.js:36, a closure local; created once at line 69 (export const scoreTrace = createScoreTrace()) during module evaluation at bootstrap; grows only via records.push at line 48, reached only from appendRunEnd, called only at src/main.js:56 on the running to run-end transition; destroyed by nothing in the delivery - no delete/splice/pop/shift/length=0 and no clear function - it dies with the page's JavaScript realm. Exactly 3 references to the trace in all of src/ (main.js:18, 56, 97).",
+        "Harness: size 0 at import, 1/2/3/4 after four appends; record keys exactly endedAt, score, sessionLengthMs; sample record with score 428, endedAt 2026-08-11T08:03:10.992Z, sessionLengthMs 42871.",
+        "Copy-on-read verified: two getScoreTrace() calls give a===b false and a[0]===b[0] false but deep-equal true; pushing a forged record, setting copy[0].score=-1 and truncating the copy left trace size 4 and trace[0].score 0.",
+        "Unreachable for mutation via window.dinoDash: assign, delete, redefine and monkey-patch all four threw TypeError; descriptor writable false, configurable false, enumerable true; accessor frozen true; trace object frozen with own props appendRunEnd, list, size; no own property is an array; trace size 4 after every attempt.",
+        "Per-page-session verified by analogue: createScoreTrace() gives 0, module re-evaluated under a fresh specifier gives 0, cached re-import of the same specifier gives 4.",
+        "One record is 68 JSON bytes. Over 300001 swept records, floor(sessionLengthMs*0.01) diverges from the stored score in 1782 cases (0.594%), always by exactly 1 point, first at elapsedMs 99.6 giving score 0 and sessionLengthMs 100 versus derived 1 (score floors raw elapsedMs, sessionLengthMs is Math.round of the same value).",
+        "node --test tests/unit/score-trace.test.mjs: 10 tests, 10 pass, 0 fail, 118.6633 ms, with no npm ci and no node_modules. The only storage token anywhere under tests/ is the five-token forbidden list at tests/unit/source-hygiene.test.mjs:72.",
+        "GATE-DATABASE: id GATE-DATABASE, domain database, ownerRole ENG-06, required false, evidence [migration plan, backup and rollback proof, query or index evidence]. It is the only gate owned by ENG-06. NOT ENGAGED: all three named artifacts cannot exist - no schema at base or delivery revision so no diff to migrate, no durable byte to back up or roll back, no query engine/query/index (the whole read API is list(), a full chronological copy). The 7 required:true gates are ARCHITECTURE to ENG-02, CODE-REVIEW to ENG-01, AUTOMATED-TESTS to ENG-10, SECURITY to ENG-09, SUPPLY-CHAIN to ENG-09, DOCUMENTATION to ENG-14, INDEPENDENT-VERIFICATION to ENG-15; none is ENG-06's, so no required gate is affected.",
+        "engineering/standards/ holds 8 standards and none covers database_storage; there is no domain standard for WS-06 to discharge."
+      ],
+      "knownRisks": [
+        "L-01 The reload evidence is a Node module re-evaluation analogue, not a browser observation. AC-22/AC-23 are written against the browser storage inspector and network panel; that evidence is WS-10's under GATE-AUTOMATED-TESTS and is not claimed or pre-empted here.",
+        "L-02 The scan is static and scoped to src/. Zero call sites is source-level evidence, not a storage-inspector reading. tests/ is outside the determination.",
+        "L-03 The four tamper results are strict-mode TypeErrors; in a browser console (sloppy mode) the same operations fail silently. Same outcome, different diagnostics - no error in DevTools is not a regression.",
+        "L-04 endedAt uses the Z designator and ADR-003 carries that as a live open interpretation risk (AC-19 says explicit UTC offset; a verifier requiring numeric plus-minus HH:MM would find Z insufficient). Unsettled at this revision. In Unit 1 it is one formatting function; once a server stores the field it becomes a data migration - rows rewritten or dual-read forever, and any index or comparison on the string form rebuilt. ENG-06 has no authority to settle it.",
+        "L-05 The 0.594% score/sessionLengthMs divergence is measured on a synthetic elapsedMs sweep through the delivered functions, not on gameplay; it characterises the rounding relationship, not an observed rate in play.",
+        "L-06 source-hygiene.test.mjs forbids 5 storage tokens; this review checked 35. Cache Storage, OPFS/File System Access, navigator.storage and the window.name / history.replaceState side channels are unasserted by any test. Handed to WS-10 as coverage, not filed as a defect - nothing in src/ uses them.",
+        "L-07 Client-side score forgeability is the owner's accepted risk (DEC-20260809-001, bounded to Units 1 and 2, server-side validation required from Unit 3). Recorded as inherited context and deliberately not re-accepted here.",
+        "L-08 not_applicable is scoped to Unit 1 at this revision; it is not a standing judgement that Dino Dash will never have a database, and nothing here pre-clears Units 2-5.",
+        "Carried for later units, as analysis and not design: the record carries no identifier (no idempotency key, no stable handle, no uniqueness guarantee - any store must invent a key, and ADR-003 6.4 gates an owner key on a privacy obligation that is still open); no schema version (window.dinoDash.version is the accessor's, so presence-inference over keys is the only versioning a durable row will have); no device marker (records from two devices are unmergeable - nothing to partition, attribute or dedupe on except endedAt); endedAt is the only wall-clock field, so it is unsound as an ordering key (a mid-session clock change can make record n+1 earlier than record n) and endedAt minus sessionLengthMs is NOT the run start instant because the two come from different clocks."
+      ]
+    },
+    {
+      "workstreamId": "WS-14",
+      "ownerRole": "ENG-15",
+      "status": "completed",
+      "verificationDisposition": "passed",
+      "commands": [
+        "git clone --no-hardlinks into a temp dir outside both repos, then git checkout d3560a81",
+        "npm test gives exit 0",
+        "npm run evidence:a11y gives exit 0",
+        "node tests/tools/ac-coverage.mjs gives exit 0",
+        "npm run perf:artifact gives exit 0",
+        "npm run perf:simulation gives exit 0",
+        "node tests/security/sbom.mjs, secret-scan.mjs and surface-scan.mjs give exit 0, 0, 0",
+        "npm test at bd43f5f in a pre-WS-10 clone gives exit 0, 61 tests",
+        "git rev-parse <commit>:src for all 18 commits",
+        "git log --name-only 32d94b5..HEAD for the boundary inventory",
+        "node --input-type=module live F-01 execution against src/game/state-machine.js"
+      ],
+      "evidence": [
+        "SRC SEAL VERIFIED: all 16 commits from ea12453 (WS-03) to HEAD resolve src tree 0566d5d39599d0cdf374b5dee27d22afdb544c41; the 2 earlier commits have no src path. No workstream altered product source.",
+        "npm test from a clean clone, zero-install: tests 114 / pass 114 / fail 0, duration_ms 643.78, exit 0. node_modules absent before AND after. WS-10's 114/114 and WS-12's zero-install both reproduce exactly.",
+        "The 53-test delta reproduces: 61 tests at bd43f5f, 114 at HEAD.",
+        "evidence:a11y: 33 rows, 33 passed / 0 failed, min text 11.91 against threshold 4.5, min non-text 3.07 against threshold 3. Declared palette, not rendered pixels.",
+        "ac-coverage: evidence 11, partial 18, none 1, consistent true, problems empty. Read the test titles behind all 11 evidence criteria against unit-1-ac-traceability.md: NO evidence-claimed criterion is unsupported. AC-21, AC-25 and AC-29 carry explicit limitation strings; AC-01, the sole none, declines to borrow AC-24's evidence.",
+        "perf:artifact: 17 requests, 0 non-200, disk total equals wire total. Request count confirmed.",
+        "F-01 REPRODUCED LIVE: transition('constructor') returns true, state holds a function, STATE_VALUES.includes(state) is false, and the machine is then bricked (transition('start') returns false). WS-09's finding and WS-10's one-way-escape addition are both confirmed by execution; unreachability holds, since all 3 call sites pass literals.",
+        "Frame-rate independence confirmed: score 600/600/600 at 30/60/144 fps, spread 0 points, distancePx spread 4.48 px (0.012%).",
+        "Jump-apex spread confirmed: 134.44 / 141.67 / 145.88 px equals 8.51%, matching WS-11's stated 8.5%.",
+        "BOUNDARY CLEAN: zero delivery commits touched engineering/, .development-os/, DEVELOPMENT.md or development-os.config.json. README.md and docs/media/*.png were touched by exactly one commit, bf5ac18, authored by Product Operations - owner-directed and OUT OF SCOPE. BENCHMARK.md is not git-tracked at all.",
+        "D-1 BYTE TOTAL RECONCILED: measured 43842 B against the 42517 B in WS-08, WS-11 and WS-13. Cause: core.autocrlf true with no .gitattributes. Canonical git blobs sum to 42559 B over 18 files (index.html 2477, main.js 3903, palette.js 7049 - matching WS-08 exactly); minus src/package.json (42 B, never fetched) gives 42517. A fresh Windows checkout is CRLF, adding 1 byte per line, 1325 over the 17 fetched files. The src tree object is identical in both. WS-12 had ALREADY found and correctly diagnosed this same root cause. A disclosed environment property, not a contradiction.",
+        "D-2 WS-09 UNDERCOUNT: WS-09 states 10 inherited names accepted by transition(); the actual number is 12. tests/security/surface-scan.mjs hard-codes a 10-name probe omitting __defineSetter__ and __lookupSetter__. It understates rather than overstates and changes no conclusion. WS-10 had already corrected the methodology by deriving the alphabet from Object.getOwnPropertyNames(Object.prototype) at runtime.",
+        "D-3 WS-09 STALE SCAN FIGURE: zero matches on all 25 credential patterns no longer reproduces - pem_certificate 1 and putty_key_file 1 at HEAD, both self-matches on the scanner's own regex literals at tests/security/secret-scan.mjs:43-44. tests/security/ was UNTRACKED at d5b71dd (verified by listing that tree), so the tool could not then match itself. True when made, stale now. No credential material; sensitive paths ever tracked remains 0.",
+        "DECLARED GAPS ARE GENUINELY DECLARED: no browser tier (WS-10's cold Playwright run: ten minutes, zero output, exit 143), unset performance budget (both perf harnesses close by refusing to assert a threshold), rendered-pixel half of AC-16/AC-17. Each appears in the runbook, the operating overview and the machine-readable coverage matrix as an open gap. ci.yml states in its own header that it has NEVER been executed.",
+        "POST-COMMIT SEAL RE-CHECK: git rev-parse HEAD:src equals 0566d5d39599d0cdf374b5dee27d22afdb544c41 - UNCHANGED. The commit 979c6fb changed exactly one file; its parent is still d3560a81; git diff d3560a81..HEAD over src, tests, package.json and package-lock.json is empty.",
+        "DISPOSITION passed: every load-bearing claim reproduced. The three discrepancies are a line-ending artifact the delivery had already self-diagnosed, an undercount that understates a finding and was already corrected methodologically, and a stale-by-construction scan figure with no credential behind it. No material claim failed to reproduce; no gap was hidden rather than declared."
+      ],
+      "knownRisks": [
+        "R-01 src/ byte totals and any sha256 over src/ files are checkout-dependent on Windows (core.autocrlf true, no .gitattributes). A root .gitattributes would settle it; outside this workstream's write boundary.",
+        "R-02 F-01 remains LIVE and UNFIXED in sealed source, unreachable only because all three call sites pass literals. The first unit to route a string into transition() makes it real. True breadth is 12 inherited names, not the 10 recorded by WS-09.",
+        "R-03 tests/security/surface-scan.mjs hard-codes its probe list and will keep under-reporting F-01's breadth.",
+        "R-04 secret-scan.mjs will keep reporting 2 self-matches until it excludes its own source; a future reader must not read them as credential material.",
+        "R-05 Fourteen criteria stay partial and AC-01 stays none until a browser tier exists. This verification covers the unit tier only - NO rendered pixel was observed by this workstream."
+      ]
+    }
+  ],
+  "generatedAt": "2026-08-11T15:16:37.606Z"
+}

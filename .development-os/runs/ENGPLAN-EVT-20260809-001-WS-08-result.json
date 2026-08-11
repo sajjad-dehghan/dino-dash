@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "planId": "ENGPLAN-EVT-20260809-001",
+  "workstreamId": "WS-08",
+  "ownerRole": "ENG-08",
+  "producerActorId": "actor-eng-08",
+  "status": "completed",
+  "verificationDisposition": "not_applicable",
+  "implementationRevision": "661f970f033f5862546a6205a9f12eda0bca3e7a8bba07c841a4598db72c8ce9",
+  "changedComponents": [
+    "docs/engineering/WS-08-platform-review.md"
+  ],
+  "commands": [
+    "git rev-parse HEAD",
+    "git ls-files | wc -l",
+    "git ls-files | grep -Ei (IaC/container/cloud filename pattern: dockerfile, docker-compose, .tf, .tfvars, .tfstate, pulumi, cloudformation, chart.yaml, values.yaml, serverless.yaml, vercel.json, netlify.toml, fly.toml, app.yaml, Procfile, nginx.conf, .env*)",
+    "git ls-files | grep -Ei (directory pattern: k8s, kubernetes, helm, terraform, infra, infrastructure, deploy, deployment, .circleci, ansible)",
+    "git grep -nIiE (cloud/IaC content tokens across all tracked files, excluding prior WS-0* reviews)",
+    "grep -rnoE (network API and URL-bearing pattern over src/: fetch(, XMLHttpRequest, WebSocket, sendBeacon, EventSource, importScripts, @import, url(), href=, src=)",
+    "grep -rnE \"^\\s*(import|export)[^;]*from\" src/ --include=*.js",
+    "find src -type f -printf '%s\\t%p\\n' | sort -rn",
+    "find src -type f | wc -l ; find src -type f -printf '%s\\n' | awk '{s+=$1} END {print s}'",
+    "find . -path ./.git -prune -o \\( -iname '.env*' -o -iname '*secret*' -o -iname '*.pem' -o -iname '*.key' -o -iname 'credentials*' \\) -print",
+    "node -e (inline: resolve src/index.html module graph transitively; emit request closure, byte total, largest file)",
+    "node tests/tools/static-server.mjs 4188",
+    "node -e (inline: GET all 17 cold-load paths on 127.0.0.1:4188; assert status 200 and Content-Type; sum bytes)",
+    "git add docs/engineering/WS-08-platform-review.md",
+    "git -c user.name=\"ENG-08 Platform, Cloud and Network\" -c user.email=\"actor-eng-08@dino-dash.local\" commit -m \"WS-08 Platform, Cloud and Network for DEVREQ-EVT-20260809-001: recorded not-applicable determination with zero IaC and cloud tokens, measured 17-request static artifact and static-origin hosting floor\""
+  ],
+  "evidence": [
+    "Revision reviewed b35af29f4516c54b00fd8473b45b763688982978; 79 tracked files scanned.",
+    "IaC/container/cloud filename scan (Dockerfile, docker-compose*, *.tf/*.tfvars/*.tfstate/*.tf.json, pulumi*, *cloudformation*, chart.yaml, values.yaml, serverless.yml, vercel.json, netlify.toml, fly.toml, app.yaml, Procfile, nginx.conf, .env*): 0 matches.",
+    "Directory scan (k8s, kubernetes, helm, terraform, infra, infrastructure, deploy, deployment, .circleci, ansible): 0 matches.",
+    "Content token scan across all tracked files excluding prior WS-0* reviews (terraform, pulumi, cloudformation, kubernetes, kubectl, helm, docker, serverless, aws_, s3://, gs://, azure, gcp, cloudfront, route53, lambda, fargate, nginx, vercel, netlify, heroku, fly.io, cdn.): 0 matches.",
+    "Runtime network API scan of src/ (fetch(, XMLHttpRequest, WebSocket, sendBeacon, EventSource, importScripts, @import, url()): 2 hits, both prose comments (src/main.js:6, src/trace/score-trace.js:11); 0 call sites.",
+    "Deployable artifact measured: src/ = 18 files, 42559 bytes total, all 18 git-tracked. Largest file src/render/palette.js 7049 B; second src/render/canvas-renderer.js 6191 B. Runtime dependencies 0.",
+    "Cold load = 17 HTTP requests (1 document + 1 stylesheet + 15 ES modules), 42517 bytes. Favicon is href=data:, = 0 requests. src/package.json (42 B) is never fetched. Cross-origin requests 0; requests after load 0.",
+    "Measured live: started tests/tools/static-server.mjs on 127.0.0.1:4188, issued all 17 GETs, got 17/17 status 200 with correct MIME (text/html, text/css, text/javascript), 42517 bytes, 0 failures; server stopped, nothing left running.",
+    "GATE-INFRA-NETWORK (engineering/quality/gates.json lines 76-84): ownerRole ENG-08, domain infrastructure, required false, evidence [infrastructure plan, network and cost review]. NOT ENGAGED - both evidence items have no referent: 0 infrastructure artifacts and 0 runtime network calls, so authoring either would document a system that does not exist. No required:true gate is owned by ENG-08.",
+    "Static-origin claim VERIFIED not asserted: src/index.html:60 is script type=module src=main.js; 0 classic (non-module) script tags; no nomodule, no inline bootstrap; 24 static import/export-from statements in src/, every specifier relative, no bare specifier, no import map, no dynamic import(). All 15 JS files load only via module resolution, so file:// (opaque origin, module CORS) fails the load and emits a console error, failing AC-01. Consistent with ADR-001 section 4.",
+    "Minimum viable hosting: any HTTP static file server that serves the 17 files of src/ at one origin with relative paths preserved and sends text/javascript for .js. Nothing else - no TLS, routing, rewrite, server logic, session or state. Floor already met by tests/tools/static-server.mjs (63 lines, zero dependencies); ADR-005 section 2 assigns the pinned equivalent to WS-12.",
+    "Toolchain/secret state: no root package.json, no lockfile, no .github/, no CI workflow, no node_modules at this revision (WS-12 has not run). Worktree search for .env*, *secret*, *.pem, *.key, credentials*: 0 files.",
+    "Cited without re-running: WS-01-coordination.md (sections 0, 1, B-01, B-03, R-02, R-03), ADR-001 section 4, ADR-005 sections 1/2/4/6, WS-04 (no server/API/integration), WS-05 (no packaged client), WS-06 (no persistence), WS-07 (no telemetry/pipeline).",
+    "Unit 3 analysis (relayed owner disposition: self-hosted on owner machine, local, any client may submit): no cloud account so no provider, region, IAM, managed service or external billing; no scaling story - no autoscaling, load balancer, capacity plan or availability target, replaced by reachable only while that machine runs, which Unit 1 is immune to since it declares no network dependency; a single origin, extending the section 5 file-reader by one request handler and giving GATE-INFRA-NETWORK's network half a referent while the cost half stays empty; and any client may submit makes the origin the only enforcement surface because it is the only component that is not the submitting client. No component, technology, sizing or mechanism proposed.",
+    "Provisioned nothing. No IaC, Dockerfile or deployment config written. No infrastructure/, database/, migrations/, services/, app/, apps/ or packages/ directory created. Exactly one file created: docs/engineering/WS-08-platform-review.md (369 lines). Nothing under engineering/, .development-os/, DEVELOPMENT.md, development-os.config.json, src/, tests/ or D:/os-test/dino-dash touched."
+  ],
+  "knownRisks": [
+    "No browser was driven. The file:// failure is verified only at its preconditions (type=module, zero classic-script fallback, all-relative specifiers). Observing the Chromium console error is WS-10 browser-tier work under AC-01 and is not claimed here.",
+    "WS-12 has not run: no root package.json, lockfile or CI workflow exists. All artifact figures are the WS-03 delivery and should not change under ADR-005 section 1 (no build step), but a re-measure after WS-12 is the correct check if doubted.",
+    "Section 6 rests on a coordinator-relayed owner disposition for Unit 3. ENG-08 did not read the product workspace D:/os-test/dino-dash and does not restate the decision identifier; if the relay is inaccurate its four consequences are too. Sections 1-5 do not depend on it.",
+    "GATE-INFRA-NETWORK is not waived, deferred or pre-cleared for any later unit; it becomes live as soon as a unit introduces a hosted component.",
+    "The owner's client-side score-tamperability risk acceptance is bounded to Units 1 and 2 and is neither re-accepted nor widened here. real_money_or_provider_operation, product_direction_or_priority and final_user_visible_acceptance are neither engaged nor pre-cleared.",
+    "Carried unchanged: contract security NFR / ISS-20260809-010 (whether Unit 1 must emit an attestable score trace is a Unit 1 question generated by Unit 3), privacy NFR / ISS-20260809-015 (self-hosting relocates the friend-group data, it does not reduce the unmet consent/retention/deletion obligation), and WS-01 R-02 (performance budget remains UNKNOWN; ENG-08 invented none).",
+    "Pre-existing working-tree state (modified engineering/taskboard/workstreams.csv, untracked .development-os/ files) predates WS-08 and is intake bookkeeping, not this delivery, per WS-01 B-07. Only the one docs/ file was staged."
+  ],
+  "completedAt": "2026-08-11T09:11:15Z"
+}
