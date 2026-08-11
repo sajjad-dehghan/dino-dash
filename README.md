@@ -17,6 +17,18 @@ Run, jump the cacti, beat your last score.
 
 ---
 
+## Benchmark: architecture vs. a raw prompt
+
+This game was used in a controlled case study comparing two outputs from **the same Claude Sonnet model and the same product prompt**: one direct-prompt implementation and one produced through the Product/Development Operations OS.
+
+The structured implementation scored **88/100** across the evidenced categories, compared with **63/100** for the direct-prompt baseline, and delivered **114 passing automated tests versus none**. The baseline remained stronger in immediate feature density.
+
+**The visual comparison was withdrawn on review.** Neither game had actually been seen rendered when the original graphics score was assigned — it was inferred from a feature list. Which of the two looks better is unresolved, and the scorecard now says so instead of guessing.
+
+Read the methodology, full weighted scorecard, evidence, and limitations in **[BENCHMARK.md](BENCHMARK.md)**.
+
+---
+
 ## ▶️ Play it in 30 seconds
 
 You need [Node.js](https://nodejs.org) 20 or newer. Nothing else.
@@ -107,7 +119,7 @@ src/
 node --test "tests/unit/*.test.mjs"
 ```
 
-**61 assertions, 61 passing, zero dependencies.** They cover the state transition table and its no-ops, jump edge semantics, the delta-time clamp, score monotonicity, collision geometry, obstacle lifecycle, the trace record shape, and a whole-run integration that plays a real game frame by frame with an injected clock and a seeded random source.
+**114 assertions, 114 passing, zero dependencies — and `npm test` needs no install step at all.** They cover the state transition table and its no-ops, jump edge semantics, the delta-time clamp, score monotonicity, collision geometry, obstacle lifecycle, the trace record shape, a whole-run integration that plays a real game frame by frame with an injected clock and a seeded random source, plus regression guards for a latent prototype-chain defect the security review found and the absence of every storage, network and identity API.
 
 ### The score trace
 
