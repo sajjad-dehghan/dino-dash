@@ -1,0 +1,21 @@
+{
+  "name": "dino-dash",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dino Dash Unit 1 - a zero-dependency browser game served from src/, with a zero-dependency test and accessibility-evidence toolchain (DEVREQ-EVT-20260809-001, WS-12).",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "test": "node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=tests/.results/unit-junit.xml \"tests/unit/*.test.mjs\"",
+    "test:quiet": "node --test-reporter=junit --test-reporter-destination=tests/.results/unit-junit.xml --test \"tests/unit/*.test.mjs\"",
+    "start": "node tests/tools/static-server.mjs",
+    "evidence:a11y": "node tests/a11y/contrast-evidence.mjs",
+    "perf:simulation": "node --expose-gc tests/perf/simulation-cost.mjs",
+    "perf:artifact": "node tests/perf/artifact-weight.mjs"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

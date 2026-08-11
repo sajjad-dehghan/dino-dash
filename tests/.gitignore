@@ -1,1 +1,9 @@
-.results/
+# Generated machine-readable results (unit tier JUnit XML, accessibility evidence JSON
+# and its sha256 sidecar) are never committed.
+#
+# The DIRECTORY itself is committed - via the negation below and the placeholder
+# .results/.gitignore - so that a CLEAN CHECKOUT already has somewhere for
+# `--test-reporter-destination` and the evidence command to write, with no mkdir,
+# no install step and no first-run failure (AC-30). See WS-12.
+.results/*
+!.results/.gitignore

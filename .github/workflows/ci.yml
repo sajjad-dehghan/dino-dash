@@ -1,0 +1,79 @@
+# Dino Dash Unit 1 - continuous integration (WS-12, DEVREQ-EVT-20260809-001).
+#
+# HONESTY NOTE, read this before trusting the file:
+# This workflow has NEVER BEEN EXECUTED. No CI run exists for this repository at the
+# delivery revision, so nothing below is evidenced by a green check. What IS evidenced
+# is that the two commands it runs were executed locally and from a clean checkout -
+# see docs/engineering/WS-12-delivery-review.md sections 4 and 5 for the real exit
+# codes and output. The workflow is the same two commands, nothing more.
+#
+# WHAT IS DELIBERATELY NOT HERE:
+#   - No dependency install step. The delivery has zero runtime and zero dev
+#     dependencies, there is no package-lock.json, and `npm ci` would fail with
+#     nothing to install. `npm test` runs on a bare checkout.
+#   - No browser tier. ADR-005 chose Playwright for rendered-pixel and journey
+#     evidence, but WS-12 adds no dependency for tests that do not exist yet
+#     (browser-tier content is WS-10's). A workflow step that referenced a missing
+#     tier would be a stated command that does not run, which is worse than an
+#     absent one.
+#   - No performance job. tests/perf/* are measurement harnesses that assert nothing
+#     and have no pass/fail outcome (WS-11 section 11). Putting them in a pass/fail
+#     pipeline would manufacture the threshold WS-11 refused to invent.
+
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-and-accessibility:
+    name: Unit tier and accessibility evidence (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 20.11.0 is the declared engines floor (first Node 20 with the built-in
+        # junit test reporter). 22.x is the version the delivery was executed on.
+        node: ['20.11.0', '22.x']
+
+    steps:
+      - name: Check out the delivery revision
+        uses: actions/checkout@v4
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Record the toolchain actually used
+        run: |
+          node --version
+          npm --version
+
+      - name: Confirm no dependency install is required
+        run: |
+          test ! -d node_modules
+          echo "no node_modules present; the tiers below run on a bare checkout"
+
+      - name: Unit tier, machine-readable results
+        run: npm test
+
+      - name: Accessibility evidence for the declared contrast matrix
+        run: npm run evidence:a11y
+
+      - name: Upload machine-readable results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-node-${{ matrix.node }}
+          path: |
+            tests/.results/unit-junit.xml
+            tests/.results/a11y-contrast.json
+            tests/.results/a11y-contrast.json.sha256
+          if-no-files-found: error
