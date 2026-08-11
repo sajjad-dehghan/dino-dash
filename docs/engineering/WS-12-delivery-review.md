@@ -257,27 +257,36 @@ Not a claim about a clean checkout. A clean checkout.
 ### 5.1 How it was made
 
 ```
-git worktree add --detach <temp-dir-outside-both-repos> c85a5ac
+git worktree add --detach <temp-dir-outside-both-repos> 6d884f1
 ```
 
-A detached worktree of the toolchain revision in a temporary directory outside `dino-dash-app` and
-outside `D:/os-test/dino-dash`. Verified before running anything: `git rev-parse HEAD` →
-`c85a5ac74771429bd6c9a3be62a4be58197ca98f`; **no `node_modules` directory**; `tests/.results/`
-present and containing only its committed `.gitignore` placeholder. No install command was run there,
-at any point.
+A detached worktree of the **final code revision** `6d884f11759a04e414972787703f31a180fdcffe` in a
+temporary directory outside `dino-dash-app` and outside `D:/os-test/dino-dash`. Verified before
+running anything: `git rev-parse HEAD` → `6d884f11759a04e414972787703f31a180fdcffe`; **no
+`node_modules` directory**; `tests/.results/` present and containing only its committed `.gitignore`
+placeholder. No install command was run there, at any point.
+
+This proof was executed twice: once at `c85a5ac` (the toolchain commit) and again, in full, at
+`6d884f1` after the §9 header correction. The table below is the **second** run. Both runs agreed on
+every exit code and every count.
 
 ### 5.2 The runs, with real exit codes
 
 | Command | Exit | Observed |
 | --- | ---: | --- |
-| `npm test` | **0** | `tests 61 / pass 61 / fail 0 / cancelled 0 / skipped 0 / todo 0`, `duration_ms 469.5565`; wrote `tests/.results/unit-junit.xml` (7,149 B) |
-| `npm run evidence:a11y` | **0** | 33 rows, 33 passed, 0 failed; `sourceRevision` resolved to `c85a5ac74771429bd6c9a3be62a4be58197ca98f`; wrote `a11y-contrast.json` (12,930 B) and `a11y-contrast.json.sha256` (digest `f9da70b7…3983e5` for that run) |
-| `node tests/tools/static-server.mjs 4188` | — | `dino-dash: serving src/ at http://127.0.0.1:4188/`; `GET /` → `200 text/html; charset=utf-8`, 2,532 B; `GET /main.js` → `200 text/javascript; charset=utf-8` |
-| `npm run perf:artifact` | **0** | 17 requests, 0 non-200, disk total = wire total |
+| `npm test` | **0** | `tests 61 / pass 61 / fail 0 / cancelled 0 / skipped 0 / todo 0`, `duration_ms 630.5886`; wrote `tests/.results/unit-junit.xml` (7,149 B) |
+| `npm run evidence:a11y` | **0** | 33 rows, 33 passed, 0 failed; min text ratio 11.91 (threshold 4.5), min non-text 3.07 (threshold 3); `sourceRevision` resolved to `6d884f11759a04e414972787703f31a180fdcffe`; wrote `a11y-contrast.json` (12,930 B) and `a11y-contrast.json.sha256` (digest `60b2ec0b85cf5f8a410b4ad0bd875f785dcf87c1eedb608d42c72efc47f1acbe` for that run) |
+| `node tests/tools/static-server.mjs 4191` | — | `dino-dash: serving src/ at http://127.0.0.1:4191/`; `GET /` → `200 text/html; charset=utf-8`, 2,532 B; `GET /main.js` → `200 text/javascript; charset=utf-8` |
+| `npm run perf:artifact` | **0** | 17 requests, 0 non-200, disk total = wire total (43,842 = 43,842) |
 | `npm run perf:simulation` | **0** | full WS-11 report, ends "No threshold was asserted. These are observations, not budgets." |
 
 Nothing was installed. Nothing reached the network except loopback in the two server-backed steps.
 The worktree was removed afterwards.
+
+**The a11y digest is per-run, not per-revision.** `generatedAt` is embedded in the document, so the
+sha256 differs between two runs of the same revision by design — the digest attests *this artifact*,
+which is what deposition needs; it is not a reproducibility check of the palette. The reproducible
+values are the 33 rows and their ratios, which were identical across both runs.
 
 ### 5.3 One real discrepancy the clean checkout exposed — line endings
 
@@ -299,9 +308,9 @@ Consequences a verifier needs before reconciling numbers:
 
 ### 5.4 The one thing this section cannot prove about itself
 
-The transcript above was produced from a clean checkout of `c85a5ac`, which contains every file any
+The transcript above was produced from a clean checkout of `6d884f1`, which contains every file any
 stated command reads or executes. **This document is committed on top of that revision and is the only
-file in that second commit.** It adds no code, no script and no configuration; no command in §2 reads
+file in that final commit.** It adds no code, no script and no configuration; no command in §2 reads
 it. A verifier repeating §5.1–§5.2 at the final revision is running byte-identical inputs. The
 alternative — recording a proof of a revision that does not exist yet — is not available to any
 workstream, and inventing the output would be worse than stating the ordering plainly, which is what
