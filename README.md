@@ -31,6 +31,12 @@ Read the methodology, full weighted scorecard, evidence, and limitations in **[B
 
 ## ▶️ Play it in 30 seconds
 
+### Actual browser capture
+
+![Dino Dash after a real local run](docs/showroom/dino-dash.jpg)
+
+Captured from the running game on 2026-10-07 after starting a round with Space. This is the actual game UI, not a concept illustration. No network calls or player accounts are involved.
+
 You need [Node.js](https://nodejs.org) 20 or newer. Nothing else.
 
 ```bash
