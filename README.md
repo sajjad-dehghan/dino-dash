@@ -1,3 +1,44 @@
+<!-- visual-showroom:start -->
+<p align="center">
+  <img src="docs/showroom/readme-banner.svg" alt="Dino Dash — repository cover" width="100%">
+</p>
+
+<p align="center">
+  <strong>Dino Dash</strong><br>
+  SMALL GAMES / REAL PLAY
+</p>
+
+<p align="center">
+  <a href="https://sajjad-dehghan-personal-site.prisoner-sedwna.workers.dev/projects/dino-dash"><strong>Explore the showroom ↗</strong></a> ·
+  <a href="#implementation--original-documentation">Setup &amp; implementation ↓</a>
+</p>
+
+A colorful endless runner for the browser with no dependencies and no build step. Every color pair passes WCAG AA, it's fully playable by keyboard, and it has 114 tests. Built with the Open Product Operations OS.
+
+## Visual tour
+
+[![Dino Dash · actual browser gameplay](docs/showroom/readme-view-1.jpg)](https://sajjad-dehghan-personal-site.prisoner-sedwna.workers.dev/projects/dino-dash)
+
+<p align="center">
+  <a href="https://sajjad-dehghan-personal-site.prisoner-sedwna.workers.dev/projects/dino-dash"><img src="docs/showroom/readme-view-2.png" alt="Dawn gameplay" width="48%"></a>
+  <a href="https://sajjad-dehghan-personal-site.prisoner-sedwna.workers.dev/projects/dino-dash"><img src="docs/showroom/readme-view-3.png" alt="Noon gameplay" width="48%"></a>
+  <a href="https://sajjad-dehghan-personal-site.prisoner-sedwna.workers.dev/projects/dino-dash"><img src="docs/showroom/readme-view-4.png" alt="Dusk gameplay" width="48%"></a>
+</p>
+
+1. Dino Dash · actual browser gameplay
+2. Dawn gameplay
+3. Noon gameplay
+4. Dusk gameplay
+
+Real captures or owner-supplied images, not generated product mockups. Demo/local data and edition boundaries are documented below.
+
+## Implementation & original documentation
+
+The existing run instructions, architecture, limitations and credits are preserved below.
+
+---
+<!-- visual-showroom:end -->
+
 <div align="center">
 
 # 🦕 Dino Dash
